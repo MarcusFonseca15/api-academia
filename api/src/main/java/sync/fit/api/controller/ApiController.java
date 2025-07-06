@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
+@RequestMapping(path = "/clientes")
 public class ApiController {
 
     private List<String> clientes = new ArrayList<>();
@@ -17,21 +18,20 @@ public class ApiController {
 
     public ApiController(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
-        
     }
 
-    @GetMapping(path = "/clientes")
+    @GetMapping
     public ResponseEntity<String> listClientes() throws JsonProcessingException {
         return ResponseEntity.ok(objectMapper.writeValueAsString(clientes));
     }
 
-    @PostMapping(path = "/clientes")
+    @PostMapping
     public ResponseEntity<String> addClient(@RequestBody String cliente) {
         clientes.add(cliente);
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping(path = "/clientes")
+    @DeleteMapping
     public ResponseEntity<Void> clearClients() {
         clientes = new ArrayList<>();
         return ResponseEntity.ok().build();
