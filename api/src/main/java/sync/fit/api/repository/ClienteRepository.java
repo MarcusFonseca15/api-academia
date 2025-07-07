@@ -1,4 +1,7 @@
 package sync.fit.api.repository;
 
-public interface ClienteRepository {
+import sync.fit.api.model.Cliente;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface ClienteRepository extends JpaRepository<Cliente, Long> {
 }
