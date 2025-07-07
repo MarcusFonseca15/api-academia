@@ -1,19 +1,12 @@
-package sync.fit.api.model;
+package sync.fit.api.dto;
 
-public class Plano {
+public class PlanoResponseDTO {
     private Long id;
     private String tipo;
-    private Double valor;
+    private double valor;
     private int duracaoMeses;
 
-    public Plano() {
-    }
-
-    public Plano(Long id, String tipo, Double valor, int duracaoMeses) {
-        this.id = id;
-        this.tipo = tipo;
-        this.valor = valor;
-        this.duracaoMeses = duracaoMeses;
+    public PlanoResponseDTO() {
     }
 
     public Long getId() {
@@ -32,11 +25,11 @@ public class Plano {
         this.tipo = tipo;
     }
 
-    public Double getValor() {
+    public double getValor() {
         return valor;
     }
 
-    public void setValor(Double valor) {
+    public void setValor(double valor) {
         this.valor = valor;
     }
 
