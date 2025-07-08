@@ -1,7 +1,11 @@
 package sync.fit.api.service;
 
-import sync.fit.api.dto.ClienteRequestDTO;
 import sync.fit.api.dto.ClienteResponseDTO;
+
+// import com.seuprojeto.dto.ClienteRequestDTO;
+// import com.seuprojeto.dto.ClienteResponseDTO;
+import sync.fit.api.dto.request.ClienteRequestDTO;
+import sync.fit.api.dto.response.ClienteResponseDTO;
 import sync.fit.api.model.Administrador;
 import sync.fit.api.model.Cliente;
 import sync.fit.api.model.Plano;

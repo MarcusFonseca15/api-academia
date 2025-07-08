@@ -1,50 +1,28 @@
 package sync.fit.api.model;
 
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.math.BigDecimal;
+
+@Entity
+@Table(name = "plano")
+@Data // ✅ Gera getters, setters, equals, hashCode, toString
+@NoArgsConstructor // ✅ Construtor padrão
+@AllArgsConstructor // ✅ Construtor com todos os parâmetros
 public class Plano {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false, length = 50)
     private String tipo;
-    private Double valor;
+
+    @Column(nullable = false, precision = 10, scale = 2)
+    private BigDecimal valor;
+
     private int duracaoMeses;
-
-    public Plano() {
-    }
-
-    public Plano(Long id, String tipo, Double valor, int duracaoMeses) {
-        this.id = id;
-        this.tipo = tipo;
-        this.valor = valor;
-        this.duracaoMeses = duracaoMeses;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTipo() {
-        return tipo;
-    }
-
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
-    }
-
-    public Double getValor() {
-        return valor;
-    }
-
-    public void setValor(Double valor) {
-        this.valor = valor;
-    }
-
-    public int getDuracaoMeses() {
-        return duracaoMeses;
-    }
-
-    public void setDuracaoMeses(int duracaoMeses) {
-        this.duracaoMeses = duracaoMeses;
-    }
 }
