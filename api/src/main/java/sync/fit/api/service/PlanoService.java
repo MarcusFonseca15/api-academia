@@ -2,8 +2,8 @@ package sync.fit.api.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import sync.fit.api.dto.PlanoRequestDTO;
-import sync.fit.api.dto.PlanoResponseDTO;
+import sync.fit.api.dto.request.PlanoRequestDTO;
+import sync.fit.api.dto.response.PlanoResponseDTO;
 import sync.fit.api.model.Plano;
 import sync.fit.api.repository.PlanoRepository;
 

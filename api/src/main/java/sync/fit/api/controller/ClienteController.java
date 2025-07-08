@@ -3,7 +3,7 @@ package sync.fit.api.controller;
 import sync.fit.api.dto.request.ClienteRequestDTO;
 import sync.fit.api.dto.response.ClienteResponseDTO;
 import sync.fit.api.service.ClienteService;
-import jakarta.validation.Valid;
+import jakarta.validation.Valid; // Certifique-se de ter esta importação
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/clientes")
-@RequiredArgsConstructor
+@RequestMapping("/api/clientes")
+@RequiredArgsConstructor // Gera o construtor com os campos 'final'
 public class ClienteController {
 
     private final ClienteService clienteService;

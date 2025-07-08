@@ -1,5 +1,7 @@
 package sync.fit.api.dto.response;
 
+import java.math.BigDecimal;
+
 public class PlanoResponseDTO {
     private Long id;
     private String tipo;

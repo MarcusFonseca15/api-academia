@@ -2,8 +2,8 @@ package sync.fit.api.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import sync.fit.api.dto.PlanoRequestDTO;
-import sync.fit.api.dto.PlanoResponseDTO;
+import sync.fit.api.dto.request.PlanoRequestDTO;
+import sync.fit.api.dto.response.PlanoResponseDTO;
 import sync.fit.api.service.PlanoService;
 
 import java.util.List;

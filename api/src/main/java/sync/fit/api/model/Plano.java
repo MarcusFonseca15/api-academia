@@ -21,8 +21,8 @@ public class Plano {
     @Column(nullable = false, length = 50)
     private String tipo;
 
-    @Column(nullable = false, precision = 10, scale = 2)
-    private BigDecimal valor;
+    @Column(nullable = false)
+    private double valor;
 
     private int duracaoMeses;
 }
