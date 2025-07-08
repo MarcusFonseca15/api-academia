@@ -1,6 +1,6 @@
 package sync.fit.api.service;
 
-import sync.fit.api.dto.ClienteResponseDTO;
+//import sync.fit.api.dto.ClienteResponseDTO;
 
 // import com.seuprojeto.dto.ClienteRequestDTO;
 // import com.seuprojeto.dto.ClienteResponseDTO;
