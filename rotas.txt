@@ -1,0 +1,45 @@
+AvaliaçãoFisica ("/api/avaliações"):
+- [POST] Criar
+- [GET] Listar por cliente: ("/cliente/{id}")
+
+
+Cliente ("/api/clientes"):
+✅- [GET] Listar todos
+✅- [GET] Listar por cliente: ("/api/clientes/id")
+✅- [POST] Criar
+✅- [PUT] Atualizar ("/api/clientes/id")
+✅- [DELETE] Deletar ("/api/clientes/id")
+
+
+⚠️Está com problemas na estrutura!
+Exercicio ("/api/exercicios"):
+- [POST] Criar
+- [GET] Listar todos
+
+
+Funcionario ("/api/funcionarios")
+✅- [POST] Criar administrador ("/api/funcionarios/administradores")
+✅- [POST] Criar instrutor ("/api/funcionarios/instrutores")
+- [POST] Criar recepcionista ("/api/funcionarios/recepcionistas")
+✅- [GET] Listar todos ("/api/funcionarios")
+✅- [GET] Listar por funcionario ("/api/funcionarios")
+✅- [PUT] Atualizar ("/api/funcionarios/id")
+✅- [DELETE] Deletar ("/api/funcionarios/id")
+
+
+Instrutor
+...
+
+
+Pagamento
+...
+
+
+Plano ("/api/planos")
+✅- [POST] Criar
+✅- [GET] Listar todos
+
+
+Treino ("/api/treinos")
+✅- [POST] Criar
+✅- [GET] Listar todos
