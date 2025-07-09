@@ -1,4 +1,46 @@
 package sync.fit.api.controller;
 
+import sync.fit.api.dto.request.PagamentoRequestDTO;
+import sync.fit.api.dto.response.PagamentoResponseDTO;
+import sync.fit.api.service.PagamentoService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.*;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/pagamentos")
+@RequiredArgsConstructor
 public class PagamentoController {
+
+    private final PagamentoService pagamentoService;
+
+    @GetMapping
+    public ResponseEntity<List<PagamentoResponseDTO>> getAll() {
+        return ResponseEntity.ok(pagamentoService.findAll());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<PagamentoResponseDTO> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(pagamentoService.findById(id));
+    }
+
+    @PostMapping
+    public ResponseEntity<PagamentoResponseDTO> create(@Valid @RequestBody PagamentoRequestDTO dto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(pagamentoService.save(dto));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<PagamentoResponseDTO> update(@PathVariable Long id,
+            @Valid @RequestBody PagamentoRequestDTO dto) {
+        return ResponseEntity.ok(pagamentoService.update(id, dto));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        pagamentoService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
 }
