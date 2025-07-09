@@ -15,13 +15,13 @@ public class ExercicioController {
     @Autowired
     private ExercicioService exercicioService;
 
-//    @PostMapping
-//    public ExercicioResponseDTO criar(@RequestBody ExercicioRequestDTO dto) {
-//        return exercicioService.criar(dto);
-//    }
-//
-//    @GetMapping
-//    public List<ExercicioResponseDTO> listarTodos() {
-//        return exercicioService.listarTodos();
-//    }
+    @PostMapping
+    public ExercicioResponseDTO criar(@RequestBody ExercicioRequestDTO dto) {
+        return exercicioService.criar(dto);
+    }
+
+    @GetMapping
+    public List<ExercicioResponseDTO> listarTodos() {
+        return exercicioService.listarTodos();
+    }
 }

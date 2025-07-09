@@ -9,7 +9,7 @@ import sync.fit.api.service.TreinoService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/treinos")
+@RequestMapping("/api/treinos")
 public class TreinoController {
 
     @Autowired

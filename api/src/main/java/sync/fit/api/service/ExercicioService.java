@@ -15,32 +15,32 @@ import java.util.stream.Collectors;
 @Service
 public class ExercicioService {
 
-//    @Autowired
-//    private ExercicioRepository exercicioRepository;
-//
-//    @Autowired
-//    private TreinoRepository treinoRepository;
-//
-//    public ExercicioResponseDTO criar(ExercicioRequestDTO dto) {
-//        Treino treino = treinoRepository.findById(dto.getTreinoId()).orElseThrow();
-//
-//        Exercicio e = new Exercicio();
-//        e.setNome(dto.getNome());
-//        e.setDescricao(dto.getDescricao());
-//        e.setRepeticoes(dto.getRepeticoes());
-//        e.setSeries(dto.getSeries());
-//        e.setTreino(treino);
-//
-//        Exercicio salvo = exercicioRepository.save(e);
-//
-//        return toResponseDTO(salvo);
-//    }
-//
-//    public List<ExercicioResponseDTO> listarTodos() {
-//        return exercicioRepository.findAll().stream()
-//                .map(this::toResponseDTO)
-//                .collect(Collectors.toList());
-//    }
+    @Autowired
+    private ExercicioRepository exercicioRepository;
+
+    @Autowired
+    private TreinoRepository treinoRepository;
+
+    public ExercicioResponseDTO criar(ExercicioRequestDTO dto) {
+        Treino treino = treinoRepository.findById(dto.getTreinoId()).orElseThrow();
+
+        Exercicio e = new Exercicio();
+        e.setNome(dto.getNome());
+        e.setDescricao(dto.getDescricao());
+        e.setRepeticoes(dto.getRepeticoes());
+        e.setSeries(dto.getSeries());
+        e.setTreino(treino);
+
+        Exercicio salvo = exercicioRepository.save(e);
+
+        return toResponseDTO(salvo);
+    }
+
+    public List<ExercicioResponseDTO> listarTodos() {
+        return exercicioRepository.findAll().stream()
+                .map(this::toResponseDTO)
+                .collect(Collectors.toList());
+    }
 
     private ExercicioResponseDTO toResponseDTO(Exercicio e) {
         ExercicioResponseDTO dto = new ExercicioResponseDTO();
@@ -49,7 +49,9 @@ public class ExercicioService {
         dto.setDescricao(e.getDescricao());
         dto.setRepeticoes(e.getRepeticoes());
         dto.setSeries(e.getSeries());
-        // dto.setNomeTreino(e.getTreino().getNome());
+        dto.setNomeTreino(e.getTreino().getDescricao());
         return dto;
     }
+
+
 }
