@@ -9,7 +9,7 @@ import sync.fit.api.service.PlanoService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/planos")
+@RequestMapping("/api/planos")
 public class PlanoController {
 
     @Autowired

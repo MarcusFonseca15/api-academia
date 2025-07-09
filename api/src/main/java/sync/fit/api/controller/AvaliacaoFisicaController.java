@@ -9,7 +9,7 @@ import sync.fit.api.service.AvaliacaoFisicaService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/avaliacoes")
+@RequestMapping("/api/avaliacoes")
 public class AvaliacaoFisicaController {
 
     @Autowired

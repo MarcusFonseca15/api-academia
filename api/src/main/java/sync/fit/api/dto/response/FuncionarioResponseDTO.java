@@ -1,50 +1,32 @@
 package sync.fit.api.dto.response;
 
-public class FuncionarioResponseDTO {
 
+import com.fasterxml.jackson.annotation.JsonInclude; // Importar
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL) // Inclui apenas campos não nulos no JSON
+public class FuncionarioResponseDTO {
     private Long id;
     private String nome;
     private String email;
-    private String cargo;
+    private String cargoNome;
+    private Long cargoId;
     private Double salario;
+    private String tipoFuncionario; // Novo campo para indicar o tipo
 
-    public Long getId() {
-        return id;
-    }
+    // Campos específicos para Instrutor
+    private String especialidade;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    // Campos específicos para Administrador
+    // private String departamentoGerenciado;
 
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getCargo() {
-        return cargo;
-    }
-
-    public void setCargo(String cargo) {
-        this.cargo = cargo;
-    }
-
-    public Double getSalario() {
-        return salario;
-    }
-
-    public void setSalario(Double salario) {
-        this.salario = salario;
-    }
+    // Campos específicos para Recepcionista
+    private String turnoPreferencial;
 }

@@ -1,13 +1,12 @@
 package sync.fit.api.dto.request;
-
-// sync.fit.api.dto.request.InstrutorRequestDTO.java
+// sync.fit.api.dto.request.AdministradorRequestDTO.java
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 
-public class InstrutorRequestDTO {
+public class AdministradorRequestDTO {
     @NotBlank(message = "O nome é obrigatório")
     private String nome;
 
@@ -16,19 +15,21 @@ public class InstrutorRequestDTO {
     private String email;
 
     @NotBlank(message = "A senha é obrigatória")
-    private String senha;
+    private String senha; // Lembre-se de criptografar no serviço!
 
-    private String telefone;
+    private Double salario; // <--- ADICIONE ESTA LINHA**
 
-    @NotBlank(message = "A especialidade é obrigatória para um instrutor")
-    private String especialidade; // Campo específico de Instrutor
+    private String telefone; // Telefone pode ser opcional
 
-    // Salário (se instrutores tiverem salário)
-    private Double salario;
+    // Salário (se administradores tiverem salário e for enviado separadamente)
+    // private Double salario; // Se salário não for um atributo na entidade Administrador, remova
 
+    // Cargo ID não é estritamente necessário aqui, já que o tipo é implícito.
+    // Mas se você quiser validar que é um ID de cargo de Administrador, pode manter.
+    // Ou pode simplesmente definir o cargo_id fixo como o ID do Cargo "Administrador" no serviço.
     @NotNull(message = "O ID do cargo é obrigatório")
     @PositiveOrZero(message = "O ID do cargo deve ser um número positivo")
-    private Long cargoId; // Ou defina o ID fixo do Cargo "Instrutor" no serviço
+    private Long cargoId;
 
     // Getters e Setters
     public String getNome() { return nome; }
@@ -39,10 +40,14 @@ public class InstrutorRequestDTO {
     public void setSenha(String senha) { this.senha = senha; }
     public String getTelefone() { return telefone; }
     public void setTelefone(String telefone) { this.telefone = telefone; }
-    public String getEspecialidade() { return especialidade; }
-    public void setEspecialidade(String especialidade) { this.especialidade = especialidade; }
-    public Double getSalario() { return salario; }
-    public void setSalario(Double salario) { this.salario = salario; }
     public Long getCargoId() { return cargoId; }
     public void setCargoId(Long cargoId) { this.cargoId = cargoId; }
+
+    public Double getSalario() {
+        return salario;
+    }
+
+    public void setSalario(Double salario) {
+        this.salario = salario;
+    }
 }

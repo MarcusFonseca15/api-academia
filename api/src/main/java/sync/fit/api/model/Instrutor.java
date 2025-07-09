@@ -1,62 +1,27 @@
 package sync.fit.api.model;
 
-import jakarta.persistence.*;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+import lombok.NoArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode; // Para incluir campos da superclasse no equals/hashCode
 
 @Entity
-public class Instrutor {
+@DiscriminatorValue("Instrutor") // Valor que será armazenado em 'tipo_funcionario'
+@Data
+@NoArgsConstructor
+@EqualsAndHashCode(callSuper = true) // Importante: Garante que equals/hashCode considerem campos da superclasse
+public class Instrutor extends Funcionario {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    private String nome;
-
+  // Exemplo de campo específico de Instrutor
     private String especialidade;
 
-    @ManyToOne
-    @JoinColumn(name = "administrador_id")
-    private Administrador administrador;
-
-    public Instrutor(Long id, String nome, String especialidade, Administrador administrador) {
-        this.id = id;
-        this.nome = nome;
+    // Construtor sem argumentos necessário para JPA
+    // Construtor completo para Instrutor, chamando o construtor da superclasse
+    public Instrutor(Long id, String nome, String email, Cargo cargo, Double salario, String especialidade) {
+        super(id, nome, email, cargo, salario);
         this.especialidade = especialidade;
-        this.administrador = administrador;
-    }
-
-    public Instrutor() {
-
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public String getEspecialidade() {
-        return especialidade;
-    }
-
-    public void setEspecialidade(String especialidade) {
-        this.especialidade = especialidade;
-    }
-
-    public Administrador getAdministrador() {
-        return administrador;
-    }
-
-    public void setAdministrador(Administrador administrador) {
-        this.administrador = administrador;
     }
 }

@@ -1,11 +1,20 @@
 package sync.fit.api.dto.request;
 
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
+
 public class FuncionarioRequestDTO {
 
     private String nome;
     private String email;
-    private String cargo;
+
+
+    @NotNull(message = "O ID do cargo é obrigatório")
+    @PositiveOrZero(message = "O ID do cargo deve ser um número positivo")
+    private Long cargoId; // <-- Alterado: Agora recebe o ID do Cargo
+
     private Double salario;
+
 
     public String getNome() {
         return nome;
@@ -23,12 +32,12 @@ public class FuncionarioRequestDTO {
         this.email = email;
     }
 
-    public String getCargo() {
-        return cargo;
+    public Long getCargoId() {
+        return cargoId;
     }
 
-    public void setCargo(String cargo) {
-        this.cargo = cargo;
+    public void setCargoId(Long cargoId) {
+        this.cargoId = cargoId;
     }
 
     public Double getSalario() {

@@ -1,15 +1,17 @@
 package sync.fit.api.dto.request;
+// sync.fit.api.dto.request.RecepcionistaRequestDTO.java
 
-// sync.fit.api.dto.request.InstrutorRequestDTO.java
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 
-public class InstrutorRequestDTO {
+public class RecepcionistaRequestDTO {
     @NotBlank(message = "O nome é obrigatório")
     private String nome;
+
+    private Double salario; // <--- ADICIONE ESTA LINHA**
 
     @NotBlank(message = "O email é obrigatório")
     @Email(message = "Email inválido")
@@ -20,15 +22,14 @@ public class InstrutorRequestDTO {
 
     private String telefone;
 
-    @NotBlank(message = "A especialidade é obrigatória para um instrutor")
-    private String especialidade; // Campo específico de Instrutor
+    @NotBlank(message = "O turno preferencial é obrigatório para uma recepcionista")
+    private String turnoPreferencial; // Campo específico de Recepcionista
 
-    // Salário (se instrutores tiverem salário)
-    private Double salario;
+
 
     @NotNull(message = "O ID do cargo é obrigatório")
     @PositiveOrZero(message = "O ID do cargo deve ser um número positivo")
-    private Long cargoId; // Ou defina o ID fixo do Cargo "Instrutor" no serviço
+    private Long cargoId; // Ou defina o ID fixo do Cargo "Recepcionista" no serviço
 
     // Getters e Setters
     public String getNome() { return nome; }
@@ -39,10 +40,12 @@ public class InstrutorRequestDTO {
     public void setSenha(String senha) { this.senha = senha; }
     public String getTelefone() { return telefone; }
     public void setTelefone(String telefone) { this.telefone = telefone; }
-    public String getEspecialidade() { return especialidade; }
-    public void setEspecialidade(String especialidade) { this.especialidade = especialidade; }
+    public String getTurnoPreferencial() { return turnoPreferencial; }
+    public void setTurnoPreferencial(String turnoPreferencial) { this.turnoPreferencial = turnoPreferencial; }
     public Double getSalario() { return salario; }
     public void setSalario(Double salario) { this.salario = salario; }
     public Long getCargoId() { return cargoId; }
     public void setCargoId(Long cargoId) { this.cargoId = cargoId; }
+
+
 }
