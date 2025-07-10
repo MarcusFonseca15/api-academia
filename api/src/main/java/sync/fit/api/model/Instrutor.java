@@ -4,24 +4,31 @@ package sync.fit.api.model;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
-import lombok.NoArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode; // Para incluir campos da superclasse no equals/hashCode
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+
+import java.util.Collection;
+import java.util.List;
 
 @Entity
-@DiscriminatorValue("Instrutor") // Valor que será armazenado em 'tipo_funcionario'
+@DiscriminatorValue("INSTRUTOR") // Use o nome do enum aqui
 @Data
 @NoArgsConstructor
-@EqualsAndHashCode(callSuper = true) // Importante: Garante que equals/hashCode considerem campos da superclasse
+@EqualsAndHashCode(callSuper = true)
 public class Instrutor extends Funcionario {
 
-  // Exemplo de campo específico de Instrutor
     private String especialidade;
 
-    // Construtor sem argumentos necessário para JPA
-    // Construtor completo para Instrutor, chamando o construtor da superclasse
-    public Instrutor(Long id, String nome, String email, Cargo cargo, Double salario, String especialidade) {
-        super(id, nome, email, cargo, salario);
+    public Instrutor(String nome, String email, String senha, Cargo cargo, Double salario, String especialidade) {
+        super(nome, email, senha, cargo, salario);
         this.especialidade = especialidade;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority("ROLE_INSTRUTOR")); // Role para instrutores
     }
 }

@@ -1,17 +1,21 @@
 package sync.fit.api.model;
 
+
 import jakarta.persistence.*;
-import lombok.Data; // Pode manter @Data se quiser, ou usar @Getter, @Setter
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor; // Remover este se você adicionar construtores específicos
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails; // Importar
+
+import java.util.Collection; // Importar
 
 @Entity
-@Table(name = "funcionario") // A tabela principal que conterá todos os tipos de funcionários
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE) // Define a estratégia de herança
-@DiscriminatorColumn(name = "tipo_funcionario", discriminatorType = DiscriminatorType.STRING) // Coluna que dirá o tipo
-@Data // Usando @Data para simplicidade, mas pode ser @Getter @Setter
-@NoArgsConstructor // Necessário para JPA
-public abstract class Funcionario { // Mudar para abstract, pois Funcionario não será instanciado diretamente
+@Table(name = "funcionario")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "tipo_funcionario", discriminatorType = DiscriminatorType.STRING)
+@Data
+@NoArgsConstructor
+public abstract class Funcionario implements UserDetails { // Agora implementa UserDetails
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,23 +27,59 @@ public abstract class Funcionario { // Mudar para abstract, pois Funcionario nã
     @Column(nullable = false, unique = true)
     private String email;
 
+    @Column(nullable = false) // Adicione o campo senha aqui
+    private String senha;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cargo_id", nullable = false)
-    private Cargo cargo;
+    private Cargo cargo; // Considere se Cargo é realmente necessário se TipoFuncionario já define a role
 
     @Column(nullable = false)
     private Double salario;
 
     // Construtor para ser usado pelas subclasses
-    public Funcionario(Long id, String nome, String email, Cargo cargo, Double salario) {
-        this.id = id;
+    public Funcionario(String nome, String email, String senha, Cargo cargo, Double salario) {
         this.nome = nome;
         this.email = email;
+        this.senha = senha;
         this.cargo = cargo;
         this.salario = salario;
     }
 
-    // Se usar Lombok @AllArgsConstructor na classe, ele já geraria este construtor.
-    // Mas como a classe se torna 'abstract' e pode ter mais construtores nas subclasses,
-    // é bom ter um construtor explícito aqui ou controlar com @AllArgsConstructor se Lombok estiver configurado para isso.
+    // --- Implementação dos métodos de UserDetails ---
+    // ATENÇÃO: getAuthorities() será implementado em CADA SUBCLASSE
+    // para retornar a ROLE específica de cada uma.
+    @Override
+    public abstract Collection<? extends GrantedAuthority> getAuthorities(); // Abstrato aqui
+
+    @Override
+    public String getPassword() {
+        return this.senha;
+    }
+
+    @Override
+    public String getUsername() {
+        return this.email; // O email será o nome de usuário para login
+    }
+
+    // Mantidos como true para simplicidade, ajuste se precisar de lógica de bloqueio/expiração
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }

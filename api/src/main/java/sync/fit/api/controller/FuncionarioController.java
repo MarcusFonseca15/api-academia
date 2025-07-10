@@ -37,11 +37,11 @@ public class FuncionarioController {
         return ResponseEntity.status(HttpStatus.CREATED).body(novoInstrutor);
     }
 
-    @PostMapping("/recepcionistas") // Exemplo: POST /api/funcionarios/recepcionistas
-    public ResponseEntity<FuncionarioResponseDTO> criarRecepcionista(@Valid @RequestBody RecepcionistaRequestDTO dto) {
-        FuncionarioResponseDTO novaRecepcionista = funcionarioService.criarRecepcionista(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(novaRecepcionista);
-    }
+//    @PostMapping("/recepcionistas") // Exemplo: POST /api/funcionarios/recepcionistas
+//    public ResponseEntity<FuncionarioResponseDTO> criarRecepcionista(@Valid @RequestBody RecepcionistaRequestDTO dto) {
+//        FuncionarioResponseDTO novaRecepcionista = funcionarioService.criarRecepcionista(dto);
+//        return ResponseEntity.status(HttpStatus.CREATED).body(novaRecepcionista);
+//    }
 
     // --- Endpoints para Operações Genéricas (Listar, Buscar por ID, Atualizar, Deletar) ---
 

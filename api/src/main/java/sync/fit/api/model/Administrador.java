@@ -3,30 +3,30 @@ package sync.fit.api.model;
 
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.Data; // Ou @Getter, @Setter
-import lombok.EqualsAndHashCode; // Para incluir campos da superclasse no equals/hashCode
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+
+import java.util.Collection;
+import java.util.List;
 
 @Entity
-// Este valor será armazenado na coluna 'tipo_funcionario' da tabela 'funcionario'
-@DiscriminatorValue("Administrador")
-@Data // Inclui getters, setters, toString, equals e hashCode
-@NoArgsConstructor // Construtor sem argumentos para JPA
-@EqualsAndHashCode(callSuper = true) // Importante: Garante que equals/hashCode considerem campos da superclasse
+@DiscriminatorValue("ADMINISTRADOR") // Use o nome do enum aqui para consistência
+@Data
+@NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 public class Administrador extends Funcionario {
 
-    // Se houver algum campo específico para Administrador, adicione-o aqui.
-    // Exemplo:
-    // @Column(nullable = true)
-    // private String departamentoGerenciado;
-
-    // Construtor completo chamando o construtor da superclasse.
-    // O Lombok @AllArgsConstructor na superclasse Funcionario, se usado,
-    // e aqui no Administrador com callSuper = true, geraria um construtor semelhante.
-    // Se você não usou @AllArgsConstructor em Funcionario, este construtor explícito é bom.
-    public Administrador(Long id, String nome, String email, Cargo cargo, Double salario) {
-        super(id, nome, email, cargo, salario);
+    // Construtor sem argumentos necessário para JPA
+    // Construtor completo para Administrador
+    public Administrador(String nome, String email, String senha, Cargo cargo, Double salario) {
+        super(nome, email, senha, cargo, salario);
     }
 
-
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority("ROLE_ADMIN")); // Role para administradores
+    }
 }

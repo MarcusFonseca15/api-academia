@@ -13,7 +13,7 @@ import sync.fit.api.model.Funcionario;
 import sync.fit.api.model.Cargo;
 import sync.fit.api.model.Instrutor; // Importar Instrutor
 import sync.fit.api.model.Administrador; // Importar Administrador
-import sync.fit.api.model.Recepcionista; // Importar Recepcionista
+
 
 import sync.fit.api.repository.CargoRepository;
 import sync.fit.api.repository.FuncionarioRepository;
@@ -66,21 +66,21 @@ public class FuncionarioService {
         return toResponseDTO(salvo);
     }
 
-    @Transactional
-    public FuncionarioResponseDTO criarRecepcionista(RecepcionistaRequestDTO dto) {
-        Cargo cargo = cargoRepository.findById(dto.getCargoId())
-                .orElseThrow(() -> new ResourceNotFoundException("Cargo não encontrado com ID: " + dto.getCargoId()));
-
-        Recepcionista recepcionista = new Recepcionista();
-        recepcionista.setNome(dto.getNome());
-        recepcionista.setEmail(dto.getEmail());
-        recepcionista.setCargo(cargo);
-        recepcionista.setSalario(dto.getSalario());
-        recepcionista.setTurnoPreferencial(dto.getTurnoPreferencial()); // Campo específico de Recepcionista
-
-        Recepcionista salvo = funcionarioRepository.save(recepcionista); // Salva Recepcionista
-        return toResponseDTO(salvo);
-    }
+//    @Transactional
+//    public FuncionarioResponseDTO criarRecepcionista(RecepcionistaRequestDTO dto) {
+//        Cargo cargo = cargoRepository.findById(dto.getCargoId())
+//                .orElseThrow(() -> new ResourceNotFoundException("Cargo não encontrado com ID: " + dto.getCargoId()));
+//
+//        Recepcionista recepcionista = new Recepcionista();
+//        recepcionista.setNome(dto.getNome());
+//        recepcionista.setEmail(dto.getEmail());
+//        recepcionista.setCargo(cargo);
+//        recepcionista.setSalario(dto.getSalario());
+//        recepcionista.setTurnoPreferencial(dto.getTurnoPreferencial()); // Campo específico de Recepcionista
+//
+//        Recepcionista salvo = funcionarioRepository.save(recepcionista); // Salva Recepcionista
+//        return toResponseDTO(salvo);
+//    }
 
     // --- Métodos de Leitura e Atualização (Polimórficos) ---
 
@@ -158,11 +158,7 @@ public class FuncionarioService {
             dto.setTipoFuncionario("Administrador");
             // Se Administrador tiver campos específicos, adicione-os aqui
             // dto.setDepartamentoGerenciado(administrador.getDepartamentoGerenciado());
-        } else if (f instanceof Recepcionista recepcionista) {
-            dto.setTipoFuncionario("Recepcionista");
-            // Se Recepcionista tiver campos específicos, adicione-os aqui
-            // dto.setTurnoPreferencial(recepcionista.getTurnoPreferencial());
-        } else {
+        }  else {
             dto.setTipoFuncionario("Desconhecido"); // Fallback
         }
 
