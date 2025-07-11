@@ -3,6 +3,7 @@ package sync.fit.api.dto.request;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
+import sync.fit.api.model.enums.StatusPagamento;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -19,7 +20,7 @@ public class PagamentoRequestDTO {
     private LocalDate dataPagamento;
 
     @NotBlank(message = "O status é obrigatório")
-    private String status;
+    private StatusPagamento status;
 
     @NotNull(message = "O ID do cliente é obrigatório")
     private Long clienteId;

@@ -1,6 +1,8 @@
 package sync.fit.api.model;
 
 import jakarta.persistence.*;
+import sync.fit.api.model.enums.StatusPagamento;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
@@ -15,13 +17,13 @@ public class Pagamento {
 
     private LocalDate dataPagamento;
 
-    private String status;
+    private StatusPagamento status;
 
     @ManyToOne
     @JoinColumn(name = "cliente_id")
     private Cliente cliente;
 
-    public Pagamento(Long id, BigDecimal valor, LocalDate dataPagamento, String status, Cliente cliente) {
+    public Pagamento(Long id, BigDecimal valor, LocalDate dataPagamento, StatusPagamento status, Cliente cliente) {
         this.id = id;
         this.valor = valor;
         this.dataPagamento = dataPagamento;
@@ -57,11 +59,11 @@ public class Pagamento {
         this.dataPagamento = dataPagamento;
     }
 
-    public String getStatus() {
+    public StatusPagamento getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(StatusPagamento status) {
         this.status = status;
     }
 
