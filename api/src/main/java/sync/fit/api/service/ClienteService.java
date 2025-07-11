@@ -16,12 +16,8 @@ import sync.fit.api.repository.RoleRepository; // IMPORTAR O ROLE REPOSITORY
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-<<<<<<< HEAD
 import org.springframework.transaction.annotation.Transactional; // Para operações transacionais
 import sync.fit.api.service.EmailService;
-=======
-import org.springframework.transaction.annotation.Transactional;
->>>>>>> 9b41120bacc682f74f439a302b1aecc69e9baf81
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,12 +26,18 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ClienteService {
 
-    private final ClienteRepository clienteRepository;
-    private final PlanoRepository planoRepository;
-    private final AdministradorRepository administradorRepository;
+    @Autowired
+    private ClienteRepository clienteRepository;
+
+    @Autowired
+    private PlanoRepository planoRepository;
+
+    @Autowired
+    private AdministradorRepository administradorRepository;
+
     private final PasswordEncoder passwordEncoder;
-    private final RoleRepository roleRepository; // INJETAR ROLE REPOSITORY
-    private final ClienteMapper clienteMapper; // INJETAR CLIENTE MAPPER
+    private final RoleRepository roleRepository; // IMPORTAR O ROLE REPOSITORY
+    private final ClienteMapper clienteMapper; // IMPORTAR O MAPPER
 
     @Autowired
     private EmailService emailService;
@@ -128,7 +130,6 @@ public class ClienteService {
         }
         clienteRepository.deleteById(id);
     }
-<<<<<<< HEAD
 
     private ClienteResponseDTO toResponseDTO(Cliente cliente) {
         ClienteResponseDTO dto = new ClienteResponseDTO();
@@ -143,11 +144,5 @@ public class ClienteService {
         return dto;
     }
 
-    emailService.enviarEmail(
-            cliente.getEmail(),
-            "Vencimento de Plano",
-            "Olá " + cliente.getNome() + ",\n\nSeu plano está prestes a vencer. Por favor, renove seu plano para continuar usufruindo dos nossos serviços."
-    );
-=======
->>>>>>> 9b41120bacc682f74f439a302b1aecc69e9baf81
+    emailService.enviarEmail(cliente.getEmail(), "Vencimento de Plano", "Olá " + cliente.getNome() + ",\n\nSeu plano está prestes a vencer. Por favor, entre em contato conosco para renovação.\n");
 }
