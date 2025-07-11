@@ -13,6 +13,7 @@ import sync.fit.api.exception.ResourceNotFoundException; // Precisaremos criar e
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional; // Para operações transacionais
+import sync.fit.api.service.EmailService;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,6 +29,9 @@ public class ClienteService {
 
     @Autowired
     private AdministradorRepository administradorRepository;
+
+    @Autowired
+    private EmailService emailService;
 
     @Transactional(readOnly = true)
     public List<ClienteResponseDTO> findAll() {
@@ -108,4 +112,10 @@ public class ClienteService {
 //        dto.setAdministradorId(cliente.getAdministrador().getId()); // Adicionado
         return dto;
     }
+
+    emailService.enviarEmail(
+            cliente.getEmail(),
+            "Vencimento de Plano",
+            "Olá " + cliente.getNome() + ",\n\nSeu plano está prestes a vencer. Por favor, renove seu plano para continuar usufruindo dos nossos serviços."
+    );
 }
