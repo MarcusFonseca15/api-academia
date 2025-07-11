@@ -15,7 +15,7 @@ import sync.fit.api.service.CustomUserDetailsService;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.List; // Adicionado para usar List
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -24,12 +24,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
     private final CustomUserDetailsService userDetailsService;
 
-    // Lista de caminhos que devem ser PUBLICOS e IGNORADOS pelo filtro JWT
-    // Use Arrays.asList para criar uma lista imutável
-    private static final List<String> PUBLIC_PATHS = Arrays.asList(
-            "/api/auth", // Para cobrir /api/auth/**
-            "/v3/api-docs", // Para cobrir /v3/api-docs e /v3/api-docs/swagger-config
-            "/swagger-ui", // Para cobrir /swagger-ui/index.html e outros recursos
+    // Lista de caminhos que o JWT filter deve IGNORAR TOTALMENTE.
+    // Estes caminhos são permitidos pelo SecurityConfig sem autenticação.
+    // IMPORTANTE: /api/auth/login é adicionado aqui porque não queremos que o filtro JWT
+    // tente extrair ou validar um token para ele, já que é uma rota pública.
+    private static final List<String> PATHS_TO_SKIP_JWT_FILTER = Arrays.asList(
+            "/api/auth/login", // Apenas o login. POST requests para aqui não serão verificadas pelo JWT Filter.
+            "/v3/api-docs",
+            "/swagger-ui",
             "/swagger-resources",
             "/webjars",
             "/swagger-ui.html"
@@ -43,40 +45,51 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     ) throws ServletException, IOException {
 
         final String requestUri = request.getRequestURI();
+        final String requestMethod = request.getMethod(); // Pegue o método também para o login
 
-        // 1. Verifica se a requisição é para um caminho público que não precisa de autenticação JWT
-        // Percorremos a lista de caminhos públicos
-        for (String publicPath : PUBLIC_PATHS) {
-            // Usamos startsWith para verificar se a URI da requisição começa com algum dos caminhos públicos
-            if (requestUri.startsWith(publicPath)) {
-                filterChain.doFilter(request, response); // Permite a requisição passar sem validação JWT
-                return; // Encerra o processamento deste filtro
+        // **PASSO 1: VERIFICAÇÃO DE ROTAS A SEREM IGNORADAS PELO FILTRO JWT**
+        // Se a requisição for para /api/auth/login e for um POST, ou para uma das rotas do Swagger,
+        // o filtro JWT não deve fazer nada, apenas passar a requisição adiante.
+        // O SecurityConfig já lidará com o 'permitAll()'.
+        boolean shouldSkipJwtFilter = false;
+        if (requestUri.equals("/api/auth/login") && requestMethod.equals("POST")) {
+            shouldSkipJwtFilter = true;
+        } else {
+            for (String skipPath : PATHS_TO_SKIP_JWT_FILTER) {
+                if (requestUri.startsWith(skipPath)) {
+                    shouldSkipJwtFilter = true;
+                    break;
+                }
             }
         }
 
-        // Se a requisição NÃO for para um caminho público, então tentamos autenticá-la com JWT
+        if (shouldSkipJwtFilter) {
+            filterChain.doFilter(request, response);
+            return; // Encerrar o processamento deste filtro
+        }
+
+        // **PASSO 2: SE NÃO FOI IGNORADO, TENTAR PROCESSAR O JWT**
         final String authHeader = request.getHeader("Authorization");
         final String jwt;
         final String userEmail;
 
-        // 2. Verifica se o cabeçalho Authorization existe e começa com "Bearer "
+        // Se não houver cabeçalho de autorização ou não for um token Bearer,
+        // a requisição não está autenticada via JWT.
+        // O Spring Security decidirá se a rota exige autenticação ou não (401 se protegida).
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            // Se não tiver cabeçalho JWT e não for um caminho público,
-            // a requisição não está autenticada por JWT.
-            // O Spring Security ainda pode bloqueá-la se não for um 'permitAll()' em outro lugar.
             filterChain.doFilter(request, response);
             return;
         }
 
-        // 3. Extrai o token JWT (removendo o prefixo "Bearer ")
+        // Extrai o token JWT (removendo o prefixo "Bearer ")
         jwt = authHeader.substring(7);
         userEmail = jwtService.extractUsername(jwt);
 
-        // 4. Se o email foi extraído e o usuário ainda NÃO está autenticado no contexto de segurança
+        // Se o email foi extraído e o usuário ainda NÃO está autenticado no contexto de segurança
         if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
 
-            // 5. Valida o token com os detalhes do usuário carregados
+            // Valida o token com os detalhes do usuário carregados
             if (jwtService.validateToken(jwt, userDetails)) {
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                         userDetails,
@@ -87,7 +100,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         }
-        // 6. Continua a cadeia de filtros.
+        // Continua a cadeia de filtros.
         filterChain.doFilter(request, response);
     }
 }

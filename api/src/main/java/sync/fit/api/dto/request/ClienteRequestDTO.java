@@ -21,6 +21,9 @@ public class ClienteRequestDTO {
     @Email(message = "Formato de email inválido")
     private String email;
 
+    // Senha é opcional para atualização (se fornecida, será atualizada)
+    private String senha; // Não é @NotBlank aqui, pois pode ser nula na atualização
+
     @Pattern(regexp = "^\\(?(\\d{2})\\)?\\s?(\\d{4,5})\\-?(\\d{4})$", message = "Formato de telefone inválido. Ex: (XX) XXXX-XXXX ou (XX) XXXXX-XXXX")
     private String telefone;
 

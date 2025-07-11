@@ -21,9 +21,11 @@ import sync.fit.api.security.JwtAuthenticationEntryPoint;
 import sync.fit.api.service.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 
+// ... seus imports ...
+
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity(prePostEnabled = true) // Habilita @PreAuthorize
+@EnableMethodSecurity(prePostEnabled = true)
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -34,50 +36,40 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(AbstractHttpConfigurer::disable) // Desabilita CSRF para APIs RESTful sem sessões
-                .exceptionHandling(exception -> exception.authenticationEntryPoint(jwtAuthenticationEntryPoint)) // Adiciona o EntryPoint
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // stateless para JWT
+                .csrf(AbstractHttpConfigurer::disable)
+                .exceptionHandling(exception -> exception.authenticationEntryPoint(jwtAuthenticationEntryPoint))
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        // Endpoints públicos (não exigem autenticação)
-                        .requestMatchers("/api/auth/**").permitAll() // Login e registro de usuários (se houver)
-                        // URLs para Swagger/OpenAPI (documentação da API)
+                        // Apenas o endpoint de LOGIN é público (POST /api/auth/login)
+                        .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
+
+                        // As URLs do Swagger/OpenAPI são públicas
                         .requestMatchers("/v2/api-docs/**", "/v3/api-docs/**", "/swagger-resources/**",
                                 "/swagger-ui/**", "/webjars/**", "/swagger-ui.html").permitAll()
 
-                        // --- Regras de Autorização Baseadas nas Roles ---
-                        // Para simplificar a configuração do SecurityFilterChain, podemos definir regras mais genéricas aqui,
-                        // e usar @PreAuthorize nos controllers para regras mais detalhadas.
+                        // Todas as OUTRAS rotas (incluindo /api/auth/register/* e outras)
+                        // exigirão AUTENTICAÇÃO via JWT.
+                        // O @PreAuthorize nos Controllers fará a verificação de role após a autenticação.
 
-                        // Permite GET /api/funcionarios apenas para ADMIN
+                        // Exemplo de outras regras de autorização baseadas em role (APÓS AUTENTICAÇÃO)
+                        // Por exemplo, GET /api/funcionarios exige role ADMIN
                         .requestMatchers(HttpMethod.GET, "/api/funcionarios").hasRole("ADMIN")
 
-                        // Permite POST para criar administradores, instrutores, recepcionistas APENAS para ADMIN
-                        .requestMatchers(HttpMethod.POST, "/api/funcionarios/administradores").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/api/funcionarios/instrutores").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/api/funcionarios/recepcionistas").hasRole("ADMIN")
-
+                        // Rotas para criar novos tipos de funcionários (exigem AUTHENTICAÇÃO + ADMIN role)
+                        // Se você tem um controller para isso (ex: /api/funcionarios/admin, /api/funcionarios/instrutor)
+                        // Estes cairiam no anyRequest().authenticated() e seriam protegidos pelo @PreAuthorize no Controller.
+                        // Se você quiser regras de URL mais explícitas aqui:
+                        // .requestMatchers(HttpMethod.POST, "/api/funcionarios/administrador").hasRole("ADMIN") // se esta for a URL para criar admin
+                        // .requestMatchers(HttpMethod.POST, "/api/funcionarios/instrutor").hasRole("ADMIN") // se esta for a URL para criar instrutor
 
                         // Exemplo: Todos os endpoints abaixo de /api/admin/ só podem ser acessados por ADMIN
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
 
-                        // Exemplo: Todos os endpoints abaixo de /api/instrutor/ só podem ser acessados por INSTRUTOR
-                        // ou Admin (se Admin também puder gerenciar o que o instrutor faz)
+                        // Exemplo: Todos os endpoints abaixo de /api/instrutor/ só podem ser acessados por INSTRUTOR ou Admin
                         .requestMatchers("/api/instrutor/**").hasAnyRole("INSTRUTOR", "ADMIN")
 
-                        // Exemplo: Para o restante dos endpoints de /api/funcionarios (GET por ID, PUT, DELETE)
-                        // Ajuste as roles conforme sua necessidade para cada método e path
-                        .requestMatchers(HttpMethod.GET, "/api/funcionarios/{id}").hasAnyRole("ADMIN", "INSTRUTOR", "RECEPCIONISTA") // Todos podem ver o próprio, admin pode ver todos
-                        .requestMatchers(HttpMethod.PUT, "/api/funcionarios/{id}").hasRole("ADMIN") // Apenas ADMIN pode atualizar qualquer funcionário
-                        .requestMatchers(HttpMethod.DELETE, "/api/funcionarios/{id}").hasRole("ADMIN") // Apenas ADMIN pode deletar funcionário
-
-
-                        // Exemplo: Endpoints específicos para Cliente
-                        // Você pode ter algo como "/api/meus-dados" para o cliente acessar sem precisar do ID
-                        // Mas se usar o ID na URL, o @PreAuthorize é melhor para verificar se é o ID do próprio usuário logado.
-                        // .requestMatchers(HttpMethod.GET, "/api/clientes/{id}").hasAnyRole("CLIENTE", "ADMIN", "INSTRUTOR")
-                        // (Prefira @PreAuthorize aqui para lógica de "se for o próprio cliente")
-
-                        // Qualquer outra requisição requer autenticação
+                        // Quaisquer outras requisições (incluindo TODAS as /api/auth/register/*)
+                        // devem ser AUTENTICADAS.
                         .anyRequest().authenticated()
                 )
                 // Adiciona o filtro JWT antes do filtro de autenticação de usuário e senha padrão do Spring Security
@@ -86,13 +78,11 @@ public class SecurityConfig {
         return http.build();
     }
 
-    // Bean para o codificador de senhas (BCrypt recomendado)
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    // Bean para o AuthenticationManager, necessário para o processo de login
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
