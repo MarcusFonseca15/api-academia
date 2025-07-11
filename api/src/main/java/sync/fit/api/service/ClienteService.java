@@ -14,6 +14,8 @@ import sync.fit.api.repository.ClienteRepository;
 import sync.fit.api.repository.PlanoRepository;
 import sync.fit.api.repository.RoleRepository; // IMPORTAR O ROLE REPOSITORY
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional; // Para operações transacionais
@@ -59,10 +61,12 @@ public class ClienteService {
     @Transactional
     public ClienteResponseDTO save(ClienteRegisterRequestDTO requestDTO) { // Usa ClienteRegisterRequestDTO
         Administrador administrador = administradorRepository.findById(requestDTO.getAdministradorId())
-                .orElseThrow(() -> new ResourceNotFoundException("Administrador não encontrado com ID: " + requestDTO.getAdministradorId()));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Administrador não encontrado com ID: " + requestDTO.getAdministradorId()));
 
         Plano plano = planoRepository.findById(requestDTO.getPlanoId())
-                .orElseThrow(() -> new ResourceNotFoundException("Plano não encontrado com ID: " + requestDTO.getPlanoId()));
+                .orElseThrow(
+                        () -> new ResourceNotFoundException("Plano não encontrado com ID: " + requestDTO.getPlanoId()));
 
         if (clienteRepository.findByEmail(requestDTO.getEmail()).isPresent()) {
             throw new IllegalArgumentException("Email já cadastrado.");
@@ -79,7 +83,8 @@ public class ClienteService {
 
         // Atribuir a role 'ROLE_CLIENTE' ao novo cliente
         Role clienteRole = roleRepository.findByName("ROLE_CLIENTE")
-                .orElseThrow(() -> new ResourceNotFoundException("Role 'ROLE_CLIENTE' não encontrada. Certifique-se de que ela existe no banco de dados."));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Role 'ROLE_CLIENTE' não encontrada. Certifique-se de que ela existe no banco de dados."));
         cliente.getRoles().add(clienteRole);
 
         Cliente salvo = clienteRepository.save(cliente);
@@ -91,27 +96,31 @@ public class ClienteService {
         Cliente existingCliente = clienteRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado com ID: " + id));
 
-        if (!existingCliente.getEmail().equals(requestDTO.getEmail()) && clienteRepository.findByEmail(requestDTO.getEmail()).isPresent()) {
+        if (!existingCliente.getEmail().equals(requestDTO.getEmail())
+                && clienteRepository.findByEmail(requestDTO.getEmail()).isPresent()) {
             throw new IllegalArgumentException("Email já cadastrado para outro cliente.");
         }
 
         // Mapeia os campos atualizáveis do DTO para a entidade existente
-        // IMPORTANTE: o mapper `toEntity` para ClienteRequestDTO ignora o ID e a senha (no DTO de RequestDTO)
+        // IMPORTANTE: o mapper `toEntity` para ClienteRequestDTO ignora o ID e a senha
+        // (no DTO de RequestDTO)
         // então precisamos copiar manualmente para os campos que não queremos ignorar
         existingCliente.setNome(requestDTO.getNome());
         existingCliente.setEmail(requestDTO.getEmail());
         existingCliente.setTelefone(requestDTO.getTelefone());
 
-
         if (requestDTO.getPlanoId() != null && !existingCliente.getPlano().getId().equals(requestDTO.getPlanoId())) {
             Plano novoPlano = planoRepository.findById(requestDTO.getPlanoId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Plano não encontrado com ID: " + requestDTO.getPlanoId()));
+                    .orElseThrow(() -> new ResourceNotFoundException(
+                            "Plano não encontrado com ID: " + requestDTO.getPlanoId()));
             existingCliente.setPlano(novoPlano);
         }
 
-        if (requestDTO.getAdministradorId() != null && !existingCliente.getAdministrador().getId().equals(requestDTO.getAdministradorId())) {
+        if (requestDTO.getAdministradorId() != null
+                && !existingCliente.getAdministrador().getId().equals(requestDTO.getAdministradorId())) {
             Administrador novoAdmin = administradorRepository.findById(requestDTO.getAdministradorId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Administrador não encontrado com ID: " + requestDTO.getAdministradorId()));
+                    .orElseThrow(() -> new ResourceNotFoundException(
+                            "Administrador não encontrado com ID: " + requestDTO.getAdministradorId()));
             existingCliente.setAdministrador(novoAdmin);
         }
 
@@ -138,11 +147,10 @@ public class ClienteService {
         dto.setEmail(cliente.getEmail());
         dto.setTelefone(cliente.getTelefone());
         dto.setPlanoTipo(cliente.getPlano().getTipo());
-//        dto.setPlanoId(cliente.getPlano().getId()); // Adicionado
+        // dto.setPlanoId(cliente.getPlano().getId()); // Adicionado
         dto.setAdministradorNome(cliente.getAdministrador().getNome());
-//        dto.setAdministradorId(cliente.getAdministrador().getId()); // Adicionado
+        // dto.setAdministradorId(cliente.getAdministrador().getId()); // Adicionado
         return dto;
     }
 
-    emailService.enviarEmail(cliente.getEmail(), "Vencimento de Plano", "Olá " + cliente.getNome() + ",\n\nSeu plano está prestes a vencer. Por favor, entre em contato conosco para renovação.\n");
 }

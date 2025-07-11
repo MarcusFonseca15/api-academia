@@ -13,6 +13,7 @@ public class PagamentoResponseDTO {
     private Long id;
     private BigDecimal valor;
     private LocalDate dataPagamento;
+    private LocalDate dataVencimento;
     private StatusPagamento status;
     private String clienteNome;
 }

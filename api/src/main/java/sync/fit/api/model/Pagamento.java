@@ -17,16 +17,21 @@ public class Pagamento {
 
     private LocalDate dataPagamento;
 
+    @Enumerated(EnumType.STRING)
+    private LocalDate dataVencimento;
+
     private StatusPagamento status;
 
     @ManyToOne
     @JoinColumn(name = "cliente_id")
     private Cliente cliente;
 
-    public Pagamento(Long id, BigDecimal valor, LocalDate dataPagamento, StatusPagamento status, Cliente cliente) {
+    public Pagamento(Long id, BigDecimal valor, LocalDate dataPagamento, LocalDate dataVencimento,
+            StatusPagamento status, Cliente cliente) {
         this.id = id;
         this.valor = valor;
         this.dataPagamento = dataPagamento;
+        this.dataVencimento = dataVencimento;
         this.status = status;
         this.cliente = cliente;
     }
@@ -57,6 +62,14 @@ public class Pagamento {
 
     public void setDataPagamento(LocalDate dataPagamento) {
         this.dataPagamento = dataPagamento;
+    }
+
+    public LocalDate getDataVencimento() {
+        return dataVencimento;
+    }
+
+    public void setDataVencimento(LocalDate dataVencimento) {
+        this.dataVencimento = dataVencimento;
     }
 
     public StatusPagamento getStatus() {

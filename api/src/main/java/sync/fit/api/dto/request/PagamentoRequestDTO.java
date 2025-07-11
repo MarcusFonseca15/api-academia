@@ -19,9 +19,14 @@ public class PagamentoRequestDTO {
     @NotNull(message = "A data do pagamento é obrigatória")
     private LocalDate dataPagamento;
 
+    @Future(message = "A data de vencimento deve ser no futuro")
+    @NotNull(message = "A data de vencimento é obrigatória")
+    private LocalDate dataVencimento;
+
     @NotBlank(message = "O status é obrigatório")
     private StatusPagamento status;
 
     @NotNull(message = "O ID do cliente é obrigatório")
     private Long clienteId;
+
 }
