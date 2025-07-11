@@ -27,7 +27,14 @@ public class PagamentoController {
         return ResponseEntity.ok(pagamentoService.findById(id));
     }
 
-    @PostMapping
+		@GetMapping("/cliente/{clienteId}")
+		public ResponseEntity<List<PagamentoResponseDTO>> getByClienteId(@PathVariable Long clienteId) {
+			List<PagamentoResponseDTO> pagamentos = pagamentoService.findByClienteId(clienteId);
+			return ResponseEntity.ok(pagamentos);
+		}
+
+
+	@PostMapping
     public ResponseEntity<PagamentoResponseDTO> create(@Valid @RequestBody PagamentoRequestDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(pagamentoService.save(dto));
     }

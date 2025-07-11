@@ -86,4 +86,13 @@ public class PagamentoService {
         dto.setClienteNome(pagamento.getCliente().getNome());
         return dto;
     }
+
+		@Transactional(readOnly = true)
+		public List<PagamentoResponseDTO> findByClienteId(Long clienteId) {
+			List<Pagamento> pagamentos = pagamentoRepository.findByClienteId(clienteId);
+			return pagamentos.stream()
+				.map(this::toResponseDTO)
+				.collect(Collectors.toList());
+		}
+
 }
