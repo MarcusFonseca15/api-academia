@@ -17,7 +17,6 @@ public class Pagamento {
 
     private LocalDate dataPagamento;
 
-    @Enumerated(EnumType.STRING)
     private LocalDate dataVencimento;
 
     private StatusPagamento status;
