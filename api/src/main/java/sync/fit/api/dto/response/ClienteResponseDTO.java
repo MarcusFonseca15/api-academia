@@ -1,5 +1,13 @@
+// sync.fit.api.dto.response.ClienteResponseDTO.java
 package sync.fit.api.dto.response;
 
+import lombok.Data; // Adicionei @Data para simplificar getters/setters/construtores padrão
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+
+@Data // Use @Data para gerar getters, setters, toString, equals, hashCode e construtores
+@NoArgsConstructor
+@AllArgsConstructor
 public class ClienteResponseDTO {
     private Long id;
     private String nome;
@@ -7,55 +15,5 @@ public class ClienteResponseDTO {
     private String telefone;
     private String planoTipo;
     private String administradorNome;
-
-    public ClienteResponseDTO() {
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getTelefone() {
-        return telefone;
-    }
-
-    public void setTelefone(String telefone) {
-        this.telefone = telefone;
-    }
-
-    public String getPlanoTipo() {
-        return planoTipo;
-    }
-
-    public void setPlanoTipo(String planoTipo) {
-        this.planoTipo = planoTipo;
-    }
-
-    public String getAdministradorNome() {
-        return administradorNome;
-    }
-
-    public void setAdministradorNome(String administradorNome) {
-        this.administradorNome = administradorNome;
-    }
+    private String instrutorNome; // NOVO CAMPO
 }

@@ -6,30 +6,23 @@ import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
-import java.util.Set; // Importar Set
+import java.util.Set; // Para as roles
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class FuncionarioResponseDTO {
+@JsonInclude(JsonInclude.Include.NON_NULL) // Opcional, mas útil para DTOs de resposta
+public class AdministradorResponseDTO {
     private Long id;
     private String nome;
     private String email;
     private String cargoNome;
     private Long cargoId;
     private Double salario;
-    private String tipoFuncionario;
 
-    private Set<String> roles; // <--- NOVO CAMPO para as roles do funcionário
+    private Set<String> roles; // Roles específicas do Administrador
 
-    // Campos específicos para Instrutor
-    private String especialidade;
-
-    // Campos específicos para Administrador
+    // Adicione campos específicos para Administrador, se houver
     // private String departamentoGerenciado;
-
-    // Campos específicos para Recepcionista
-    private String turnoPreferencial;
 }

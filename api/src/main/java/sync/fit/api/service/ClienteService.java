@@ -1,25 +1,26 @@
+// sync.fit.api.service.ClienteService.java
 package sync.fit.api.service;
 
 import sync.fit.api.dto.request.ClienteRequestDTO;
 import sync.fit.api.dto.request.ClienteRegisterRequestDTO;
 import sync.fit.api.dto.response.ClienteResponseDTO;
 import sync.fit.api.exception.ResourceNotFoundException;
-import sync.fit.api.mapper.ClienteMapper; // IMPORTAR O MAPPER
+import sync.fit.api.mapper.ClienteMapper;
 import sync.fit.api.model.Administrador;
 import sync.fit.api.model.Cliente;
 import sync.fit.api.model.Plano;
-import sync.fit.api.model.Role; // IMPORTAR A ENTIDADE ROLE
+import sync.fit.api.model.Role;
+import sync.fit.api.model.Instrutor; // Importar Instrutor
 import sync.fit.api.repository.AdministradorRepository;
 import sync.fit.api.repository.ClienteRepository;
 import sync.fit.api.repository.PlanoRepository;
-import sync.fit.api.repository.RoleRepository; // IMPORTAR O ROLE REPOSITORY
+import sync.fit.api.repository.RoleRepository;
+import sync.fit.api.repository.InstrutorRepository; // Importar InstrutorRepository
 import lombok.RequiredArgsConstructor;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional; // Para operações transacionais
-import sync.fit.api.service.EmailService;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,26 +29,21 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ClienteService {
 
-    @Autowired
-    private ClienteRepository clienteRepository;
-
-    @Autowired
-    private PlanoRepository planoRepository;
-
-    @Autowired
-    private AdministradorRepository administradorRepository;
-
+    private final ClienteRepository clienteRepository;
+    private final PlanoRepository planoRepository;
+    private final AdministradorRepository administradorRepository;
+    private final InstrutorRepository instrutorRepository; // INJETADO
     private final PasswordEncoder passwordEncoder;
-    private final RoleRepository roleRepository; // IMPORTAR O ROLE REPOSITORY
-    private final ClienteMapper clienteMapper; // IMPORTAR O MAPPER
+    private final RoleRepository roleRepository;
+    private final ClienteMapper clienteMapper;
 
-    @Autowired
-    private EmailService emailService;
+    // Remova o @Autowired aqui e confie no @RequiredArgsConstructor
+    // private final EmailService emailService; // Se você tiver um EmailService, mantenha-o ou remova conforme necessário
 
     @Transactional(readOnly = true)
     public List<ClienteResponseDTO> findAll() {
         return clienteRepository.findAll().stream()
-                .map(clienteMapper::toResponseDTO) // USAR O MAPPER
+                .map(clienteMapper::toResponseDTO)
                 .collect(Collectors.toList());
     }
 
@@ -55,40 +51,37 @@ public class ClienteService {
     public ClienteResponseDTO findById(Long id) {
         Cliente cliente = clienteRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado com ID: " + id));
-        return clienteMapper.toResponseDTO(cliente); // USAR O MAPPER
+        return clienteMapper.toResponseDTO(cliente);
     }
 
     @Transactional
-    public ClienteResponseDTO save(ClienteRegisterRequestDTO requestDTO) { // Usa ClienteRegisterRequestDTO
+    public ClienteResponseDTO save(ClienteRegisterRequestDTO requestDTO) {
         Administrador administrador = administradorRepository.findById(requestDTO.getAdministradorId())
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Administrador não encontrado com ID: " + requestDTO.getAdministradorId()));
+                .orElseThrow(() -> new ResourceNotFoundException("Administrador não encontrado com ID: " + requestDTO.getAdministradorId()));
 
         Plano plano = planoRepository.findById(requestDTO.getPlanoId())
-                .orElseThrow(
-                        () -> new ResourceNotFoundException("Plano não encontrado com ID: " + requestDTO.getPlanoId()));
+                .orElseThrow(() -> new ResourceNotFoundException("Plano não encontrado com ID: " + requestDTO.getPlanoId()));
+
+        Instrutor instrutor = instrutorRepository.findById(requestDTO.getInstrutorId()) // BUSCAR INSTRUTOR
+                .orElseThrow(() -> new ResourceNotFoundException("Instrutor não encontrado com ID: " + requestDTO.getInstrutorId()));
 
         if (clienteRepository.findByEmail(requestDTO.getEmail()).isPresent()) {
             throw new IllegalArgumentException("Email já cadastrado.");
         }
 
-        // Mapeia o DTO para a entidade Cliente. A senha será criptografada depois.
         Cliente cliente = clienteMapper.toEntity(requestDTO);
-
-        // A senha do DTO é criptografada e atribuída ao objeto Cliente
         cliente.setSenha(passwordEncoder.encode(requestDTO.getSenha()));
+        cliente.setPlano(plano);
+        cliente.setAdministrador(administrador);
+        cliente.setInstrutor(instrutor); // ATRIBUIR INSTRUTOR
 
-        cliente.setPlano(plano); // Atribui o objeto Plano completo
-        cliente.setAdministrador(administrador); // Atribui o objeto Administrador completo
-
-        // Atribuir a role 'ROLE_CLIENTE' ao novo cliente
         Role clienteRole = roleRepository.findByName("ROLE_CLIENTE")
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Role 'ROLE_CLIENTE' não encontrada. Certifique-se de que ela existe no banco de dados."));
+                .orElseThrow(() -> new ResourceNotFoundException("Role 'ROLE_CLIENTE' não encontrada. Certifique-se de que ela existe no banco de dados."));
         cliente.getRoles().add(clienteRole);
 
         Cliente salvo = clienteRepository.save(cliente);
-        return clienteMapper.toResponseDTO(salvo); // USAR O MAPPER
+        // emailService.sendEmail(salvo.getEmail(), "Bem-vindo ao sistema!", "Seu cadastro foi realizado com sucesso.");
+        return clienteMapper.toResponseDTO(salvo);
     }
 
     @Transactional
@@ -101,27 +94,29 @@ public class ClienteService {
             throw new IllegalArgumentException("Email já cadastrado para outro cliente.");
         }
 
-        // Mapeia os campos atualizáveis do DTO para a entidade existente
-        // IMPORTANTE: o mapper `toEntity` para ClienteRequestDTO ignora o ID e a senha
-        // (no DTO de RequestDTO)
-        // então precisamos copiar manualmente para os campos que não queremos ignorar
         existingCliente.setNome(requestDTO.getNome());
         existingCliente.setEmail(requestDTO.getEmail());
         existingCliente.setTelefone(requestDTO.getTelefone());
 
         if (requestDTO.getPlanoId() != null && !existingCliente.getPlano().getId().equals(requestDTO.getPlanoId())) {
             Plano novoPlano = planoRepository.findById(requestDTO.getPlanoId())
-                    .orElseThrow(() -> new ResourceNotFoundException(
-                            "Plano não encontrado com ID: " + requestDTO.getPlanoId()));
+                    .orElseThrow(() -> new ResourceNotFoundException("Plano não encontrado com ID: " + requestDTO.getPlanoId()));
             existingCliente.setPlano(novoPlano);
         }
 
         if (requestDTO.getAdministradorId() != null
                 && !existingCliente.getAdministrador().getId().equals(requestDTO.getAdministradorId())) {
             Administrador novoAdmin = administradorRepository.findById(requestDTO.getAdministradorId())
-                    .orElseThrow(() -> new ResourceNotFoundException(
-                            "Administrador não encontrado com ID: " + requestDTO.getAdministradorId()));
+                    .orElseThrow(() -> new ResourceNotFoundException("Administrador não encontrado com ID: " + requestDTO.getAdministradorId()));
             existingCliente.setAdministrador(novoAdmin);
+        }
+
+        // NOVO: Atualiza o instrutor se o ID for diferente
+        if (requestDTO.getInstrutorId() != null &&
+                (existingCliente.getInstrutor() == null || !existingCliente.getInstrutor().getId().equals(requestDTO.getInstrutorId()))) {
+            Instrutor novoInstrutor = instrutorRepository.findById(requestDTO.getInstrutorId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Instrutor não encontrado com ID: " + requestDTO.getInstrutorId()));
+            existingCliente.setInstrutor(novoInstrutor);
         }
 
         if (requestDTO.getSenha() != null && !requestDTO.getSenha().isBlank()) {
@@ -129,7 +124,7 @@ public class ClienteService {
         }
 
         Cliente atualizado = clienteRepository.save(existingCliente);
-        return clienteMapper.toResponseDTO(atualizado); // USAR O MAPPER
+        return clienteMapper.toResponseDTO(atualizado);
     }
 
     @Transactional
@@ -140,17 +135,6 @@ public class ClienteService {
         clienteRepository.deleteById(id);
     }
 
-    private ClienteResponseDTO toResponseDTO(Cliente cliente) {
-        ClienteResponseDTO dto = new ClienteResponseDTO();
-        dto.setId(cliente.getId());
-        dto.setNome(cliente.getNome());
-        dto.setEmail(cliente.getEmail());
-        dto.setTelefone(cliente.getTelefone());
-        dto.setPlanoTipo(cliente.getPlano().getTipo());
-        // dto.setPlanoId(cliente.getPlano().getId()); // Adicionado
-        dto.setAdministradorNome(cliente.getAdministrador().getNome());
-        // dto.setAdministradorId(cliente.getAdministrador().getId()); // Adicionado
-        return dto;
-    }
-
+    // Remova este método toResponseDTO manual, pois você está usando o MapStruct
+    // private ClienteResponseDTO toResponseDTO(Cliente cliente) { ... }
 }

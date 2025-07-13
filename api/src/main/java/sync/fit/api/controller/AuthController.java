@@ -1,6 +1,5 @@
 package sync.fit.api.controller;
 
-
 import sync.fit.api.dto.request.LoginRequestDTO;
 import sync.fit.api.dto.request.ClienteRegisterRequestDTO;
 import sync.fit.api.dto.request.AdministradorRegisterRequestDTO;

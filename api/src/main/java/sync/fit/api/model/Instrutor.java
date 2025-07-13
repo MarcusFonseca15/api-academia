@@ -1,34 +1,27 @@
 package sync.fit.api.model;
 
-
-import jakarta.persistence.Column;
-import jakarta.persistence.DiscriminatorValue;
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@DiscriminatorValue("INSTRUTOR") // Use o nome do enum aqui
+@Table(name = "instrutor")
+@PrimaryKeyJoinColumn(name = "id") // <--- CORRIGIDO AQUI!
 @Data
 @NoArgsConstructor
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true, exclude = "alunos")
 public class Instrutor extends Funcionario {
 
     private String especialidade;
 
+    @OneToMany(mappedBy = "instrutor", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Cliente> alunos = new ArrayList<>();
+
     public Instrutor(String nome, String email, String senha, Cargo cargo, Double salario, String especialidade) {
         super(nome, email, senha, cargo, salario);
         this.especialidade = especialidade;
-    }
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_INSTRUTOR")); // Role para instrutores
     }
 }

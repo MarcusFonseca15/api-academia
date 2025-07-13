@@ -1,6 +1,5 @@
 package sync.fit.api.service;
 
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -11,26 +10,32 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import sync.fit.api.dto.request.LoginRequestDTO;
-import sync.fit.api.dto.request.ClienteRegisterRequestDTO; // Ajustar para o DTO de registro
-import sync.fit.api.dto.request.AdministradorRegisterRequestDTO; // Novo DTO
-import sync.fit.api.dto.request.InstrutorRegisterRequestDTO;     // Novo DTO
+import sync.fit.api.dto.request.ClienteRegisterRequestDTO;
+import sync.fit.api.dto.request.AdministradorRegisterRequestDTO;
+import sync.fit.api.dto.request.InstrutorRegisterRequestDTO;
 import sync.fit.api.dto.response.AuthResponseDTO;
 import sync.fit.api.exception.ResourceNotFoundException;
 
 import sync.fit.api.model.Cliente;
 import sync.fit.api.model.Funcionario;
-import sync.fit.api.model.Administrador; // Importar
-import sync.fit.api.model.Instrutor;     // Importar
+import sync.fit.api.model.Administrador;
+import sync.fit.api.model.Instrutor;
 
-import sync.fit.api.model.Cargo;         // Importar
-import sync.fit.api.model.Plano;         // Importar
+import sync.fit.api.model.Cargo;
+import sync.fit.api.model.Plano;
+import sync.fit.api.model.Role;
 
 import sync.fit.api.repository.ClienteRepository;
 import sync.fit.api.repository.FuncionarioRepository;
-import sync.fit.api.repository.CargoRepository;   // Importar
-import sync.fit.api.repository.PlanoRepository;   // Importar
+import sync.fit.api.repository.CargoRepository;
+import sync.fit.api.repository.PlanoRepository;
+import sync.fit.api.repository.RoleRepository;
 
 import sync.fit.api.security.JwtService;
+
+import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -41,8 +46,9 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final ClienteRepository clienteRepository;
     private final FuncionarioRepository funcionarioRepository;
-    private final CargoRepository cargoRepository; // Injetar
-    private final PlanoRepository planoRepository; // Injetar
+    private final CargoRepository cargoRepository;
+    private final PlanoRepository planoRepository;
+    private final RoleRepository roleRepository;
 
     public AuthResponseDTO login(LoginRequestDTO request) {
         Authentication authentication = authenticationManager.authenticate(
@@ -70,20 +76,29 @@ public class AuthService {
         Plano plano = planoRepository.findById(dto.getPlanoId())
                 .orElseThrow(() -> new ResourceNotFoundException("Plano não encontrado com ID: " + dto.getPlanoId()));
 
-        // Para registrar cliente, o administrador que está registrando já deve existir e ser do tipo Administrador
-        // Se este registro for público (cliente se auto-registrando), você pode remover a dependência de administrador.
         Administrador administrador = (Administrador) funcionarioRepository.findById(dto.getAdministradorId())
-                .filter(f -> f instanceof Administrador) // Garante que é um Administrador
+                .filter(f -> f instanceof Administrador)
                 .orElseThrow(() -> new ResourceNotFoundException("Administrador não encontrado ou não é um ADMIN com ID: " + dto.getAdministradorId()));
+
+        Instrutor instrutor = (Instrutor) funcionarioRepository.findById(dto.getInstrutorId())
+                .filter(f -> f instanceof Instrutor)
+                .orElseThrow(() -> new ResourceNotFoundException("Instrutor não encontrado ou não é um INSTRUTOR com ID: " + dto.getInstrutorId()));
 
         Cliente cliente = new Cliente(
                 dto.getNome(),
                 dto.getEmail(),
-                passwordEncoder.encode(dto.getSenha()), // Criptografa!
-                dto.getTelefone(),
+                passwordEncoder.encode(dto.getSenha()),
+                dto.getDataNascimento(),
+                dto.getTelefone(), // <--- Passando o telefone do DTO
                 plano,
-                administrador
+                administrador,
+                instrutor // <--- Passando o instrutor
         );
+
+        Role clienteRole = roleRepository.findByName("ROLE_CLIENTE")
+                .orElseThrow(() -> new ResourceNotFoundException("Role ROLE_CLIENTE não encontrada. Verifique seu data.sql ou inicialização de roles."));
+        cliente.getRoles().add(clienteRole);
+
         clienteRepository.save(cliente);
 
         UserDetails userDetails = clienteRepository.findByEmail(cliente.getEmail())
@@ -105,10 +120,14 @@ public class AuthService {
         Administrador administrador = new Administrador(
                 dto.getNome(),
                 dto.getEmail(),
-                passwordEncoder.encode(dto.getSenha()), // Criptografa!
+                passwordEncoder.encode(dto.getSenha()),
                 cargo,
                 dto.getSalario()
         );
+        Role adminRole = roleRepository.findByName("ROLE_ADMIN")
+                .orElseThrow(() -> new ResourceNotFoundException("Role ROLE_ADMIN não encontrada. Verifique seu data.sql ou inicialização de roles."));
+        administrador.getRoles().add(adminRole);
+
         funcionarioRepository.save(administrador);
 
         UserDetails userDetails = funcionarioRepository.findByEmail(administrador.getEmail())
@@ -130,11 +149,15 @@ public class AuthService {
         Instrutor instrutor = new Instrutor(
                 dto.getNome(),
                 dto.getEmail(),
-                passwordEncoder.encode(dto.getSenha()), // Criptografa!
+                passwordEncoder.encode(dto.getSenha()),
                 cargo,
                 dto.getSalario(),
                 dto.getEspecialidade()
         );
+        Role instrutorRole = roleRepository.findByName("ROLE_INSTRUTOR")
+                .orElseThrow(() -> new ResourceNotFoundException("Role ROLE_INSTRUTOR não encontrada. Verifique seu data.sql ou inicialização de roles."));
+        instrutor.getRoles().add(instrutorRole);
+
         funcionarioRepository.save(instrutor);
 
         UserDetails userDetails = funcionarioRepository.findByEmail(instrutor.getEmail())
@@ -143,30 +166,4 @@ public class AuthService {
         String jwt = jwtService.generateToken(userDetails);
         return new AuthResponseDTO(jwt, "INSTRUTOR", userDetails.getUsername());
     }
-
-//    @Transactional
-//    public AuthResponseDTO registerRecepcionista(RecepcionistaRegisterRequestDTO dto) {
-//        if (funcionarioRepository.findByEmail(dto.getEmail()).isPresent() ||
-//                clienteRepository.findByEmail(dto.getEmail()).isPresent()) {
-//            throw new IllegalArgumentException("Email já cadastrado.");
-//        }
-//        Cargo cargo = cargoRepository.findById(dto.getCargoId())
-//                .orElseThrow(() -> new ResourceNotFoundException("Cargo não encontrado com ID: " + dto.getCargoId()));
-//
-//        Recepcionista recepcionista = new Recepcionista(
-//                dto.getNome(),
-//                dto.getEmail(),
-//                passwordEncoder.encode(dto.getSenha()), // Criptografa!
-//                cargo,
-//                dto.getSalario(),
-//                dto.getTurnoPreferencial()
-//        );
-//        funcionarioRepository.save(recepcionista);
-//
-//        UserDetails userDetails = funcionarioRepository.findByEmail(recepcionista.getEmail())
-//                .orElseThrow(() -> new ResourceNotFoundException("Erro ao carregar recepcionista recém-registrado para token."));
-//
-//        String jwt = jwtService.generateToken(userDetails);
-//        return new AuthResponseDTO(jwt, "RECEPCIONISTA", userDetails.getUsername());
-//    }
 }
