@@ -3,6 +3,7 @@ package sync.fit.api.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import sync.fit.api.dto.request.TreinoRequestDTO;
+import sync.fit.api.dto.response.ExercicioSimplesDTO;
 import sync.fit.api.dto.response.TreinoResponseDTO;
 import sync.fit.api.model.Cliente;
 import sync.fit.api.model.Treino;
@@ -43,6 +44,17 @@ public class TreinoService {
         dto.setId(treino.getId());
         dto.setDescricao(treino.getDescricao());
         dto.setNomeCliente(treino.getCliente().getNome());
+
+        List<ExercicioSimplesDTO> exercicios = treino.getExercicios().stream().map(e -> {
+            ExercicioSimplesDTO ex = new ExercicioSimplesDTO();
+            ex.setId(e.getId());
+            ex.setNome(e.getNome());
+            ex.setRepeticoes(e.getRepeticoes());
+            ex.setSeries(e.getSeries());
+            return ex;
+        }).toList();
+
+        dto.setExercicios(exercicios); // usa o campo da DTO
         return dto;
     }
 }

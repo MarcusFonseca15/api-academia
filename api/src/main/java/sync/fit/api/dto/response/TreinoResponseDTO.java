@@ -1,9 +1,12 @@
 package sync.fit.api.dto.response;
 
+import java.util.List;
+
 public class TreinoResponseDTO {
     private Long id;
     private String descricao;
     private String nomeCliente;
+    private List<ExercicioSimplesDTO> exercicios;
 
     public TreinoResponseDTO() {
     }
@@ -30,5 +33,13 @@ public class TreinoResponseDTO {
 
     public void setNomeCliente(String nomeCliente) {
         this.nomeCliente = nomeCliente;
+    }
+
+    public List<ExercicioSimplesDTO> getExercicios() {
+        return exercicios;
+    }
+
+    public void setExercicios(List<ExercicioSimplesDTO> exercicios) {
+        this.exercicios = exercicios;
     }
 }

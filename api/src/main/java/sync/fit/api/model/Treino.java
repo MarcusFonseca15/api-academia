@@ -1,5 +1,8 @@
 package sync.fit.api.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -16,10 +19,14 @@ public class Treino {
     @JoinColumn(name = "cliente_id")
     private Cliente cliente;
 
-    public Treino(Long id, String descricao, Cliente cliente) {
+    @OneToMany(mappedBy = "treino", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private List<Exercicio> exercicios = new ArrayList<>();
+
+    public Treino(Long id, String descricao, Cliente cliente, List<Exercicio> exercicios) {
         this.id = id;
         this.descricao = descricao;
         this.cliente = cliente;
+        this.exercicios = exercicios;
     }
 
     public Treino() {
@@ -49,4 +56,13 @@ public class Treino {
     public void setCliente(Cliente cliente) {
         this.cliente = cliente;
     }
+
+    public List<Exercicio> getExercicios() {
+        return exercicios;
+    }
+
+    public void setExercicios(List<Exercicio> exercicios) {
+        this.exercicios = exercicios;
+    }
+
 }
