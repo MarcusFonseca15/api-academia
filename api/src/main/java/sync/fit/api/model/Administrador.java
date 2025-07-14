@@ -1,32 +1,33 @@
 package sync.fit.api.model;
 
-
-import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
+import jakarta.persistence.PrimaryKeyJoinColumn;
+import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-import java.util.Collection;
-import java.util.List;
+// Remova os imports não utilizados se o Lombok AllArgsConstructor for gerado no construtor padrão
+// import java.util.HashSet;
+// import java.util.List;
+// import java.util.Set;
 
 @Entity
-@DiscriminatorValue("ADMINISTRADOR") // Use o nome do enum aqui para consistência
+@Table(name = "administrador")
+@PrimaryKeyJoinColumn(name = "id") // <--- CORRIGIDO AQUI!
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class Administrador extends Funcionario {
 
-    // Construtor sem argumentos necessário para JPA
-    // Construtor completo para Administrador
+    // Se Administrador tiver atributos próprios, eles iriam aqui. Ex:
+    // private String departamentoGerenciado;
+
+    // Construtor para conveniência (sem ID e roles)
     public Administrador(String nome, String email, String senha, Cargo cargo, Double salario) {
         super(nome, email, senha, cargo, salario);
-    }
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_ADMIN")); // Role para administradores
+        // Ao criar um Administrador, você deve adicionar a role 'ADMIN' aqui ou no serviço
+        // Role roleAdmin = new Role("ROLE_ADMIN"); // Supondo que você tem uma Role
+        // this.getRoles().add(roleAdmin); // Isso deve ser feito via serviço ou persistência inicial
     }
 }

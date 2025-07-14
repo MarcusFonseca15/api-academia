@@ -23,7 +23,7 @@ public class PagamentoRequestDTO {
     @NotNull(message = "A data de vencimento é obrigatória")
     private LocalDate dataVencimento;
 
-    @NotBlank(message = "O status é obrigatório")
+    @NotNull(message = "O status é obrigatório")
     private StatusPagamento status;
 
     @NotNull(message = "O ID do cliente é obrigatório")

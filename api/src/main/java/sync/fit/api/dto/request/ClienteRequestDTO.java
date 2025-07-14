@@ -1,3 +1,4 @@
+// sync.fit.api.dto.request.ClienteRequestDTO.java
 package sync.fit.api.dto.request;
 
 import jakarta.validation.constraints.Email;
@@ -21,8 +22,7 @@ public class ClienteRequestDTO {
     @Email(message = "Formato de email inválido")
     private String email;
 
-    // Senha é opcional para atualização (se fornecida, será atualizada)
-    private String senha; // Não é @NotBlank aqui, pois pode ser nula na atualização
+    private String senha;
 
     @Pattern(regexp = "^\\(?(\\d{2})\\)?\\s?(\\d{4,5})\\-?(\\d{4})$", message = "Formato de telefone inválido. Ex: (XX) XXXX-XXXX ou (XX) XXXXX-XXXX")
     private String telefone;
@@ -32,4 +32,7 @@ public class ClienteRequestDTO {
 
     @NotNull(message = "O ID do administrador é obrigatório")
     private Long administradorId;
+
+    @NotNull(message = "O ID do instrutor é obrigatório") // NOVO CAMPO
+    private Long instrutorId;
 }

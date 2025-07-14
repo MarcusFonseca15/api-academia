@@ -1,43 +1,56 @@
 package sync.fit.api.model;
 
-
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails; // Importar
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection; // Importar
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "funcionario")
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "tipo_funcionario", discriminatorType = DiscriminatorType.STRING)
+@Inheritance(strategy = InheritanceType.JOINED)
 @Data
 @NoArgsConstructor
-public abstract class Funcionario implements UserDetails { // Agora implementa UserDetails
+@AllArgsConstructor
+@EqualsAndHashCode(of = "id")
+public abstract class Funcionario implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    protected Long id;
 
     @Column(nullable = false)
-    private String nome;
+    protected String nome;
 
     @Column(nullable = false, unique = true)
-    private String email;
-
-    @Column(nullable = false) // Adicione o campo senha aqui
-    private String senha;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cargo_id", nullable = false)
-    private Cargo cargo; // Considere se Cargo é realmente necessário se TipoFuncionario já define a role
+    protected String email;
 
     @Column(nullable = false)
-    private Double salario;
+    protected String senha;
 
-    // Construtor para ser usado pelas subclasses
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "cargo_id", nullable = false)
+    protected Cargo cargo;
+
+    @Column(nullable = false)
+    protected Double salario;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "funcionario_roles",
+            joinColumns = @JoinColumn(name = "funcionario_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    protected Set<Role> roles = new HashSet<>();
+
     public Funcionario(String nome, String email, String senha, Cargo cargo, Double salario) {
         this.nome = nome;
         this.email = email;
@@ -46,11 +59,12 @@ public abstract class Funcionario implements UserDetails { // Agora implementa U
         this.salario = salario;
     }
 
-    // --- Implementação dos métodos de UserDetails ---
-    // ATENÇÃO: getAuthorities() será implementado em CADA SUBCLASSE
-    // para retornar a ROLE específica de cada uma.
     @Override
-    public abstract Collection<? extends GrantedAuthority> getAuthorities(); // Abstrato aqui
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return this.roles.stream()
+                .map(role -> new SimpleGrantedAuthority(role.getName()))
+                .collect(Collectors.toList());
+    }
 
     @Override
     public String getPassword() {
@@ -59,10 +73,9 @@ public abstract class Funcionario implements UserDetails { // Agora implementa U
 
     @Override
     public String getUsername() {
-        return this.email; // O email será o nome de usuário para login
+        return this.email;
     }
 
-    // Mantidos como true para simplicidade, ajuste se precisar de lógica de bloqueio/expiração
     @Override
     public boolean isAccountNonExpired() {
         return true;

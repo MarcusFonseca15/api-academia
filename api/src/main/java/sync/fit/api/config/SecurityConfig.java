@@ -1,7 +1,5 @@
 package sync.fit.api.config;
 
-
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -21,8 +19,6 @@ import sync.fit.api.security.JwtAuthenticationEntryPoint;
 import sync.fit.api.service.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 
-// ... seus imports ...
-
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
@@ -40,6 +36,7 @@ public class SecurityConfig {
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(jwtAuthenticationEntryPoint))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
+
                         // Apenas o endpoint de LOGIN é público (POST /api/auth/login)
                         .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
 
