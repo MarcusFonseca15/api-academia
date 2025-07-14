@@ -8,6 +8,9 @@ import sync.fit.api.service.RelatorioFinanceiroService;
 
 import java.util.List;
 
+import sync.fit.api.dto.response.RelatorioSalarioInstrutorDTO;
+import io.swagger.v3.oas.annotations.Operation;
+
 @RestController
 @RequestMapping("/relatorios")
 public class RelatorioFinanceiroController {
@@ -19,5 +22,11 @@ public class RelatorioFinanceiroController {
     public ResponseEntity<List<RelatorioClientesPorPlanoDTO>> listarClientesPorPlano() {
         List<RelatorioClientesPorPlanoDTO> relatorio = relatorioFinanceiroService.obterRelatorioClientesPorPlano();
         return ResponseEntity.ok(relatorio);
+    }
+    @GetMapping("/salario-instrutores")
+    
+    public ResponseEntity<List<RelatorioSalarioInstrutorDTO>> listarSalarioInstrutores() {
+        List<RelatorioSalarioInstrutorDTO> salarios = relatorioFinanceiroService.obterRelatorioSalarioInstrutores();
+        return ResponseEntity.ok(salarios);
     }
 }
