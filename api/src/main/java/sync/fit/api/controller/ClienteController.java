@@ -1,10 +1,10 @@
-// sync.fit.api.controller.ClienteController.java
 package sync.fit.api.controller;
 
 import sync.fit.api.dto.request.ClienteRequestDTO;
 import sync.fit.api.dto.request.ClienteRegisterRequestDTO;
 import sync.fit.api.dto.response.ClienteResponseDTO;
 import sync.fit.api.model.Cliente;
+import sync.fit.api.model.UserIdentifiable; // Certifique-se de importar
 import sync.fit.api.service.ClienteService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,13 +24,16 @@ public class ClienteController {
 
     private final ClienteService clienteService;
 
-    @PreAuthorize("hasRole('ADMIN')")
+    // Apenas ADMIN ou RECEPCIONISTA podem listar todos os clientes
+    @PreAuthorize("hasAnyRole('ADMIN', 'RECEPCIONISTA')")
     @GetMapping
     public ResponseEntity<List<ClienteResponseDTO>> getAllClientes() {
         List<ClienteResponseDTO> clientes = clienteService.findAll();
         return ResponseEntity.ok(clientes);
     }
 
+    // ADMIN, INSTRUTOR, RECEPCIONISTA podem ver qualquer cliente.
+    // CLIENTE só pode ver a si mesmo (se o ID na URL for o seu próprio ID logado).
     @PreAuthorize("hasAnyRole('ADMIN', 'INSTRUTOR', 'RECEPCIONISTA') or (hasRole('CLIENTE') and #id == authentication.principal.id)")
     @GetMapping("/{id}")
     public ResponseEntity<ClienteResponseDTO> getClienteById(@PathVariable Long id) {
@@ -38,14 +41,16 @@ public class ClienteController {
         return ResponseEntity.ok(cliente);
     }
 
-    @PreAuthorize("hasRole('ADMIN') or hasRole('RECEPCIONISTA')")
+    // Apenas ADMIN ou RECEPCIONISTA podem criar um cliente
+    @PreAuthorize("hasAnyRole('ADMIN', 'RECEPCIONISTA')")
     @PostMapping
     public ResponseEntity<ClienteResponseDTO> createCliente(@Valid @RequestBody ClienteRegisterRequestDTO requestDTO) {
         ClienteResponseDTO cliente = clienteService.save(requestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(cliente);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    // Apenas ADMIN ou RECEPCIONISTA podem atualizar um cliente específico
+    @PreAuthorize("hasAnyRole('ADMIN', 'RECEPCIONISTA')")
     @PutMapping("/{id}")
     public ResponseEntity<ClienteResponseDTO> updateCliente(
             @PathVariable Long id,
@@ -54,6 +59,7 @@ public class ClienteController {
         return ResponseEntity.ok(cliente);
     }
 
+    // Apenas ADMIN pode deletar um cliente
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCliente(@PathVariable Long id) {
@@ -61,27 +67,31 @@ public class ClienteController {
         return ResponseEntity.noContent().build();
     }
 
+    // Cliente pode ver seu próprio perfil
     @PreAuthorize("hasRole('CLIENTE')")
     @GetMapping("/meu-perfil")
     public ResponseEntity<ClienteResponseDTO> getMeuPerfil() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        // O principal aqui já deve ser a sua entidade Cliente se CustomUserDetailsService estiver configurado corretamente
-        // para retornar um Cliente (que implementa UserDetails).
-        Cliente clienteLogado = (Cliente) authentication.getPrincipal();
+        UserIdentifiable userLogado = (UserIdentifiable) authentication.getPrincipal();
 
-        // O serviço já busca por ID e mapeia para DTO
-        ClienteResponseDTO meuPerfil = clienteService.findById(clienteLogado.getId());
+        if (!(userLogado instanceof Cliente)) { // Verificação de tipo para segurança
+            throw new SecurityException("Acesso negado: Usuário autenticado não é um Cliente.");
+        }
+        ClienteResponseDTO meuPerfil = clienteService.findById(userLogado.getId());
         return ResponseEntity.ok(meuPerfil);
     }
 
-    @PreAuthorize("hasRole('CLIENTE')") // Não precisa do #id == authentication.principal.id se o cliente só atualiza seu próprio perfil
-    @PutMapping("/meu-perfil") // Removido {id} da URL para evitar confusão. O ID é do usuário logado.
+    // Cliente pode atualizar seu próprio perfil
+    @PreAuthorize("hasRole('CLIENTE')")
+    @PutMapping("/meu-perfil")
     public ResponseEntity<ClienteResponseDTO> updateMeuPerfil(@Valid @RequestBody ClienteRequestDTO requestDTO) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Cliente clienteLogado = (Cliente) authentication.getPrincipal();
+        UserIdentifiable userLogado = (UserIdentifiable) authentication.getPrincipal();
 
-        // O service receberá o ID do cliente logado e o DTO para atualização.
-        ClienteResponseDTO updatedCliente = clienteService.update(clienteLogado.getId(), requestDTO);
+        if (!(userLogado instanceof Cliente)) { // Verificação de tipo para segurança
+            throw new SecurityException("Acesso negado: Usuário autenticado não é um Cliente.");
+        }
+        ClienteResponseDTO updatedCliente = clienteService.update(userLogado.getId(), requestDTO);
         return ResponseEntity.ok(updatedCliente);
     }
 }

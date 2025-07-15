@@ -1,4 +1,3 @@
-// sync.fit.api.dto.request.ClienteRegisterRequestDTO.java
 package sync.fit.api.dto.request;
 
 import jakarta.validation.constraints.Email;
@@ -6,9 +5,9 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
-import org.springframework.format.annotation.DateTimeFormat; // Importar para formatação de data
+import org.springframework.format.annotation.DateTimeFormat;
 
-import java.time.LocalDate; // Importar LocalDate
+import java.time.LocalDate;
 
 @Data
 public class ClienteRegisterRequestDTO {
@@ -22,20 +21,17 @@ public class ClienteRegisterRequestDTO {
     @NotBlank(message = "A senha é obrigatória")
     private String senha;
 
-    // Novo campo: dataNascimento
     @NotNull(message = "A data de nascimento é obrigatória")
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) // Garante que a data seja formatada como YYYY-MM-DD
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate dataNascimento;
 
     @Pattern(regexp = "^\\(?(\\d{2})\\)?\\s?(\\d{4,5})\\-?(\\d{4})$", message = "Formato de telefone inválido. Ex: (XX) XXXX-XXXX ou (XX) XXXXX-XXXX")
     private String telefone;
 
-    @NotNull(message = "O ID do plano é obrigatório")
+    // Não são mais @NotNull, permitindo que um cliente seja cadastrado sem plano/instrutor inicial.
+    // Se forem obrigatórios no momento do cadastro, adicione @NotNull de volta.
     private Long planoId;
-
-    @NotNull(message = "O ID do administrador é obrigatório")
-    private Long administradorId;
-
-    @NotNull(message = "O ID do instrutor é obrigatório")
+    // REMOVIDO: @NotNull(message = "O ID do administrador é obrigatório")
+    // REMOVIDO: private Long administradorId;
     private Long instrutorId;
 }

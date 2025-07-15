@@ -18,7 +18,7 @@ import sync.fit.api.exception.ResourceNotFoundException;
 
 import sync.fit.api.model.Cliente;
 import sync.fit.api.model.Funcionario;
-import sync.fit.api.model.Administrador;
+import sync.fit.api.model.Administrador; // Manter import se outras partes do AuthService usarem Administrador
 import sync.fit.api.model.Instrutor;
 
 import sync.fit.api.model.Cargo;
@@ -30,6 +30,8 @@ import sync.fit.api.repository.FuncionarioRepository;
 import sync.fit.api.repository.CargoRepository;
 import sync.fit.api.repository.PlanoRepository;
 import sync.fit.api.repository.RoleRepository;
+// import sync.fit.api.repository.AdministradorRepository; // Não precisa mais injetar, pois Cliente não tem Administrador
+import sync.fit.api.repository.InstrutorRepository; // Se você tiver um, mantenha. Se não, remova.
 
 import sync.fit.api.security.JwtService;
 
@@ -45,10 +47,11 @@ public class AuthService {
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
     private final ClienteRepository clienteRepository;
-    private final FuncionarioRepository funcionarioRepository;
+    private final FuncionarioRepository funcionarioRepository; // Usado para Administrador e Instrutor, ok
     private final CargoRepository cargoRepository;
     private final PlanoRepository planoRepository;
     private final RoleRepository roleRepository;
+    private final InstrutorRepository instrutorRepository; // Injete se for necessário buscar um instrutor por ID no registerCliente.
 
     public AuthResponseDTO login(LoginRequestDTO request) {
         Authentication authentication = authenticationManager.authenticate(
@@ -73,26 +76,33 @@ public class AuthService {
             throw new IllegalArgumentException("Email já cadastrado.");
         }
 
-        Plano plano = planoRepository.findById(dto.getPlanoId())
-                .orElseThrow(() -> new ResourceNotFoundException("Plano não encontrado com ID: " + dto.getPlanoId()));
+        Plano plano = null; // Plano agora é opcional
+        if (dto.getPlanoId() != null) {
+            plano = planoRepository.findById(dto.getPlanoId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Plano não encontrado com ID: " + dto.getPlanoId()));
+        }
 
-        Administrador administrador = (Administrador) funcionarioRepository.findById(dto.getAdministradorId())
-                .filter(f -> f instanceof Administrador)
-                .orElseThrow(() -> new ResourceNotFoundException("Administrador não encontrado ou não é um ADMIN com ID: " + dto.getAdministradorId()));
+        // REMOVIDO: Lógica de buscar Administrador
+        // Administrador administrador = (Administrador) funcionarioRepository.findById(dto.getAdministradorId())
+        //         .filter(f -> f instanceof Administrador)
+        //         .orElseThrow(() -> new ResourceNotFoundException("Administrador não encontrado ou não é um ADMIN com ID: " + dto.getAdministradorId()));
 
-        Instrutor instrutor = (Instrutor) funcionarioRepository.findById(dto.getInstrutorId())
-                .filter(f -> f instanceof Instrutor)
-                .orElseThrow(() -> new ResourceNotFoundException("Instrutor não encontrado ou não é um INSTRUTOR com ID: " + dto.getInstrutorId()));
+        Instrutor instrutor = null; // Instrutor agora é opcional
+        if (dto.getInstrutorId() != null) {
+            instrutor = instrutorRepository.findById(dto.getInstrutorId()) // Usar instrutorRepository injetado
+                    .orElseThrow(() -> new ResourceNotFoundException("Instrutor não encontrado com ID: " + dto.getInstrutorId()));
+        }
 
+
+        // ATUALIZADO: Construtor de Cliente agora não espera um Administrador
         Cliente cliente = new Cliente(
                 dto.getNome(),
                 dto.getEmail(),
                 passwordEncoder.encode(dto.getSenha()),
                 dto.getDataNascimento(),
-                dto.getTelefone(), // <--- Passando o telefone do DTO
-                plano,
-                administrador,
-                instrutor // <--- Passando o instrutor
+                dto.getTelefone(),
+                plano, // pode ser null
+                instrutor // pode ser null
         );
 
         Role clienteRole = roleRepository.findByName("ROLE_CLIENTE")
@@ -124,8 +134,8 @@ public class AuthService {
                 cargo,
                 dto.getSalario()
         );
-        Role adminRole = roleRepository.findByName("ROLE_ADMIN")
-                .orElseThrow(() -> new ResourceNotFoundException("Role ROLE_ADMIN não encontrada. Verifique seu data.sql ou inicialização de roles."));
+        Role adminRole = roleRepository.findByName("ROLE_ADMINISTRADOR") // Certifique-se que o nome da role está correto
+                .orElseThrow(() -> new ResourceNotFoundException("Role ROLE_ADMINISTRADOR não encontrada. Verifique seu data.sql ou inicialização de roles."));
         administrador.getRoles().add(adminRole);
 
         funcionarioRepository.save(administrador);

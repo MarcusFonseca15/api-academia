@@ -1,11 +1,11 @@
-// sync.fit.api.dto.response.ClienteResponseDTO.java
 package sync.fit.api.dto.response;
 
-import lombok.Data; // Adicionei @Data para simplificar getters/setters/construtores padrão
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import java.time.LocalDate; // Adicionado import
 
-@Data // Use @Data para gerar getters, setters, toString, equals, hashCode e construtores
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class ClienteResponseDTO {
@@ -13,7 +13,8 @@ public class ClienteResponseDTO {
     private String nome;
     private String email;
     private String telefone;
+    private LocalDate dataNascimento; // Adicionado data de nascimento ao response
     private String planoTipo;
-    private String administradorNome;
-    private String instrutorNome; // NOVO CAMPO
+    // REMOVIDO: private String administradorNome;
+    private String instrutorNome;
 }

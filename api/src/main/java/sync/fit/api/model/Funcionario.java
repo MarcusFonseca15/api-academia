@@ -21,8 +21,9 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
-public abstract class Funcionario implements UserDetails {
+public abstract class Funcionario implements UserDetails, UserIdentifiable {
 
+    // Adicione este getter público
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected Long id;
@@ -95,4 +96,5 @@ public abstract class Funcionario implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
 }
