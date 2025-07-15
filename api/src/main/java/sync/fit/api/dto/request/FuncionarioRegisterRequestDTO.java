@@ -1,16 +1,19 @@
 package sync.fit.api.dto.request;
 
-// Exemplo de DTO base para registro de funcionário
-// package sync.fit.api.dto.request;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.Setter;
-import sync.fit.api.model.enums.TipoFuncionario; // Importar
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
-@Getter
-@Setter
+import java.math.BigDecimal;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@SuperBuilder
 public class FuncionarioRegisterRequestDTO {
     @NotBlank(message = "O nome é obrigatório")
     private String nome;
@@ -22,17 +25,9 @@ public class FuncionarioRegisterRequestDTO {
     @NotBlank(message = "A senha é obrigatória")
     private String senha;
 
-    @NotNull(message = "O cargo ID é obrigatório")
-    private Long cargoId;
+    @NotBlank(message = "O telefone é obrigatório")
+    private String telefone;
 
     @NotNull(message = "O salário é obrigatório")
-    private Double salario;
-
-    // Não precisamos de TipoFuncionario aqui, pois a classe específica (ex: AdministradorRegisterRequestDTO)
-    // indicará o tipo.
+    private BigDecimal salario;
 }
-
-
-
-
-

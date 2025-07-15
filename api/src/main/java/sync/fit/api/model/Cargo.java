@@ -1,23 +1,26 @@
+
+
+// sync.fit.api.model.Cargo.java (Entidade Cargo, se ainda não tiver)
 package sync.fit.api.model;
 
-
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 
 @Entity
-@Table(name = "cargo") // Mapeia para a tabela 'cargo' no banco de dados
-@Data // Gera getters, setters, toString, equals e hashCode
-@NoArgsConstructor // Construtor sem argumentos
-@AllArgsConstructor // Construtor com todos os argumentos
+@Table(name = "cargo")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(of = "id")
 public class Cargo {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // Geração automática de ID
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Adicione esta linha para mapear explicitamente nomeCargo para nome_cargo
-    @Column(name = "nome_cargo", nullable = false, unique = true)
-    private String nomeCargo;
-
-    // Se precisar, adicione outros atributos para o Cargo aqui (ex: descricao, nivel)
-
+    @Column(nullable = false, unique = true, length = 50)
+    private String nomeCargo; // Ex: "Administrador", "Instrutor", "Recepcionista"
 }

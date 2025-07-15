@@ -1,14 +1,16 @@
+// sync.fit.api.model.Funcionario.java (Classe Base)
 package sync.fit.api.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -16,33 +18,34 @@ import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "funcionario")
-@Inheritance(strategy = InheritanceType.JOINED)
+@Inheritance(strategy = InheritanceType.JOINED) // Ou SINGLE_TABLE, ou TABLE_PER_CLASS
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 @EqualsAndHashCode(of = "id")
 public abstract class Funcionario implements UserDetails, UserIdentifiable {
 
-    // Adicione este getter público
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    protected Long id;
+    private Long id;
 
     @Column(nullable = false)
-    protected String nome;
+    private String nome;
 
     @Column(nullable = false, unique = true)
-    protected String email;
+    private String email;
 
     @Column(nullable = false)
-    protected String senha;
+    private String senha;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @Column(nullable = false)
+    private String telefone; // Campo comum
+
+    @Column(nullable = false)
+    private BigDecimal salario; // Campo comum
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cargo_id", nullable = false)
-    protected Cargo cargo;
-
-    @Column(nullable = false)
-    protected Double salario;
+    private Cargo cargo; // TODO: Criar entidade Cargo
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
@@ -50,16 +53,19 @@ public abstract class Funcionario implements UserDetails, UserIdentifiable {
             joinColumns = @JoinColumn(name = "funcionario_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-    protected Set<Role> roles = new HashSet<>();
+    private Set<Role> roles = new HashSet<>();
 
-    public Funcionario(String nome, String email, String senha, Cargo cargo, Double salario) {
+    // Construtor base para reuso
+    public Funcionario(String nome, String email, String senha, String telefone, BigDecimal salario, Cargo cargo) {
         this.nome = nome;
         this.email = email;
         this.senha = senha;
-        this.cargo = cargo;
+        this.telefone = telefone;
         this.salario = salario;
+        this.cargo = cargo;
     }
 
+    // Métodos UserDetails
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return this.roles.stream()
@@ -78,23 +84,17 @@ public abstract class Funcionario implements UserDetails, UserIdentifiable {
     }
 
     @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
+    public boolean isAccountNonExpired() { return true; }
+    @Override
+    public boolean isAccountNonLocked() { return true; }
+    @Override
+    public boolean isCredentialsNonExpired() { return true; }
+    @Override
+    public boolean isEnabled() { return true; }
 
     @Override
-    public boolean isAccountNonLocked() {
-        return true;
+    public Long getId() {
+        return this.id;
     }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
-
 }
+

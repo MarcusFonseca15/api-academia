@@ -1,50 +1,28 @@
 package sync.fit.api.dto.request;
 
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
+import java.math.BigDecimal;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@SuperBuilder
 public class FuncionarioRequestDTO {
-
+    @NotBlank(message = "O nome é obrigatório")
     private String nome;
+
+    @Email(message = "Email inválido")
     private String email;
 
+    private String senha;
 
-    @NotNull(message = "O ID do cargo é obrigatório")
-    @PositiveOrZero(message = "O ID do cargo deve ser um número positivo")
-    private Long cargoId; // <-- Alterado: Agora recebe o ID do Cargo
+    private String telefone;
 
-    private Double salario;
-
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public Long getCargoId() {
-        return cargoId;
-    }
-
-    public void setCargoId(Long cargoId) {
-        this.cargoId = cargoId;
-    }
-
-    public Double getSalario() {
-        return salario;
-    }
-
-    public void setSalario(Double salario) {
-        this.salario = salario;
-    }
+    private BigDecimal salario;
 }
