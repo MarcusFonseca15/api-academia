@@ -35,6 +35,29 @@ public class PlanoService {
                 .collect(Collectors.toList());
     }
 
+
+    @Transactional(readOnly = true) // Apenas leitura
+    public PlanoResponseDTO buscarPorId(Long id) {
+        Plano plano = planoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Plano não encontrado com ID: " + id));
+        return toResponseDTO(plano);
+    }
+
+
+    @Transactional
+    public PlanoResponseDTO atualizar(Long id, PlanoRequestDTO dto) {
+        Plano existingPlano = planoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Plano não encontrado com ID: " + id));
+
+        
+        existingPlano.setTipo(dto.getTipo());
+        existingPlano.setValor(dto.getValor());
+        existingPlano.setDuracaoMeses(dto.getDuracaoMeses());
+
+        Plano atualizado = planoRepository.save(existingPlano);
+        return toResponseDTO(atualizado);
+    }
+
     private PlanoResponseDTO toResponseDTO(Plano plano) {
         PlanoResponseDTO dto = new PlanoResponseDTO();
         dto.setId(plano.getId());

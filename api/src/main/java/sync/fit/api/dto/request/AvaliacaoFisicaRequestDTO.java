@@ -1,42 +1,32 @@
 package sync.fit.api.dto.request;
 
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.time.LocalDate;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class AvaliacaoFisicaRequestDTO {
+    @NotNull(message = "O peso é obrigatório")
+    @DecimalMin(value = "0.1", message = "O peso deve ser maior que zero")
     private Double peso;
+
+    @NotNull(message = "A altura é obrigatória")
+    @DecimalMin(value = "0.1", message = "A altura deve ser maior que zero")
     private Double altura;
+
+    @NotNull(message = "A data da avaliação é obrigatória")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate dataAvaliacao;
+
+    @NotNull(message = "O ID do cliente é obrigatório")
     private Long clienteId;
-
-    public Double getPeso() {
-        return peso;
-    }
-
-    public void setPeso(Double peso) {
-        this.peso = peso;
-    }
-
-    public Double getAltura() {
-        return altura;
-    }
-
-    public void setAltura(Double altura) {
-        this.altura = altura;
-    }
-
-    public LocalDate getDataAvaliacao() {
-        return dataAvaliacao;
-    }
-
-    public void setDataAvaliacao(LocalDate dataAvaliacao) {
-        this.dataAvaliacao = dataAvaliacao;
-    }
-
-    public Long getClienteId() {
-        return clienteId;
-    }
-
-    public void setClienteId(Long clienteId) {
-        this.clienteId = clienteId;
-    }
 }

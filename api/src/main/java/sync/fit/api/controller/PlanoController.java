@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import sync.fit.api.dto.request.PlanoRequestDTO;
 import sync.fit.api.dto.response.PlanoResponseDTO;
 import sync.fit.api.service.PlanoService;
+import jakarta.validation.Valid;
 
 import java.util.List;
 
@@ -17,18 +18,38 @@ public class PlanoController {
     @Autowired
     private PlanoService planoService;
 
+    // Criar Plano: Apenas ADMIN
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
-    public PlanoResponseDTO criar(@RequestBody PlanoRequestDTO dto) {
+    public PlanoResponseDTO criar(@Valid @RequestBody PlanoRequestDTO dto) {
         return planoService.criar(dto);
     }
+
 
     @GetMapping
     public List<PlanoResponseDTO> listarTodos() {
         return planoService.listarTodos();
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN')")
+
+    @GetMapping("/{id}")
+    public ResponseEntity<PlanoResponseDTO> buscarPorId(@PathVariable Long id) {
+        PlanoResponseDTO plano = planoService.buscarPorId(id);
+        return ResponseEntity.ok(plano);
+    }
+
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/{id}")
+    public ResponseEntity<PlanoResponseDTO> atualizar(
+            @PathVariable Long id,
+            @Valid @RequestBody PlanoRequestDTO dto) { // Adicionado @Valid
+        PlanoResponseDTO planoAtualizado = planoService.atualizar(id, dto);
+        return ResponseEntity.ok(planoAtualizado);
+    }
+
+
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         planoService.delete(id);
