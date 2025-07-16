@@ -19,6 +19,7 @@ public class Pagamento {
 
     private LocalDate dataVencimento;
 
+    @Enumerated(EnumType.STRING)
     private StatusPagamento status;
 
     @ManyToOne
