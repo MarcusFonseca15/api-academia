@@ -38,7 +38,7 @@ public class PagamentoController {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN')")
-	@PostMapping
+    @PostMapping
     public ResponseEntity<PagamentoResponseDTO> create(@Valid @RequestBody PagamentoRequestDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(pagamentoService.save(dto));
     }
@@ -55,5 +55,11 @@ public class PagamentoController {
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         pagamentoService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/testar-notificacao")
+    public String testarNotificacao() {
+        pagamentoService.notificarPagamentosVencendo();
+        return "Notificações de pagamentos pendentes executadas com sucesso.";
     }
 }
