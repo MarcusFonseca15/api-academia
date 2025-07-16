@@ -53,5 +53,24 @@ public class ExercicioService {
         return dto;
     }
 
+    public ExercicioResponseDTO update(Long id, ExercicioRequestDTO dto) {
+        Exercicio e = exercicioRepository.findById(id).orElseThrow();
+
+        e.setNome(dto.getNome());
+        e.setDescricao(dto.getDescricao());
+        e.setRepeticoes(dto.getRepeticoes());
+        e.setSeries(dto.getSeries());
+
+        Treino treino = treinoRepository.findById(dto.getTreinoId()).orElseThrow();
+        e.setTreino(treino);
+
+        Exercicio atualizado = exercicioRepository.save(e);
+        return toResponseDTO(atualizado);
+    }
+
+    public void delete(Long id) {
+        Exercicio e = exercicioRepository.findById(id).orElseThrow();
+        exercicioRepository.delete(e);
+    }
 
 }

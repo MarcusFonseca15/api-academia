@@ -26,4 +26,17 @@ public class ExercicioController {
     public List<ExercicioResponseDTO> listarTodos() {
         return exercicioService.listarTodos();
     }
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'INSTRUTOR')")
+    @PutMapping("/{id}")
+    public ExercicioResponseDTO update(@PathVariable Long id, @RequestBody ExercicioRequestDTO dto) {
+        return exercicioService.update(id, dto);
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'INSTRUTOR')")
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Long id) {
+        exercicioService.delete(id);
+    }
+
 }
