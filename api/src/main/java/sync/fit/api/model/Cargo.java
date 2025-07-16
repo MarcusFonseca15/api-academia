@@ -1,6 +1,6 @@
 
 
-// sync.fit.api.model.Cargo.java (Entidade Cargo, se ainda não tiver)
+
 package sync.fit.api.model;
 
 import jakarta.persistence.*;
@@ -22,5 +22,5 @@ public class Cargo {
     private Long id;
 
     @Column(nullable = false, unique = true, length = 50)
-    private String nomeCargo; // Ex: "Administrador", "Instrutor", "Recepcionista"
+    private String nomeCargo;
 }

@@ -1,8 +1,8 @@
-// sync.fit.api.model.Funcionario.java (Classe Base)
+
 package sync.fit.api.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "funcionario")
-@Inheritance(strategy = InheritanceType.JOINED) // Ou SINGLE_TABLE, ou TABLE_PER_CLASS
+@Inheritance(strategy = InheritanceType.JOINED)
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(of = "id")

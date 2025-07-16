@@ -2,8 +2,10 @@ package sync.fit.api.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import sync.fit.api.dto.request.PlanoRequestDTO;
 import sync.fit.api.dto.response.PlanoResponseDTO;
+import sync.fit.api.exception.ResourceNotFoundException;
 import sync.fit.api.model.Plano;
 import sync.fit.api.repository.PlanoRepository;
 
@@ -40,5 +42,13 @@ public class PlanoService {
         dto.setValor(plano.getValor());
         dto.setDuracaoMeses(plano.getDuracaoMeses());
         return dto;
+    }
+
+    @Transactional
+    public void delete(Long id) {
+        if (!planoRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Plano não encontrado com ID: " + id);
+        }
+        planoRepository.deleteById(id);
     }
 }

@@ -24,7 +24,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor // Usando @RequiredArgsConstructor para injeção via construtor
+@RequiredArgsConstructor
 public class FuncionarioService {
 
     private final FuncionarioRepository funcionarioRepository;
@@ -45,7 +45,7 @@ public class FuncionarioService {
         instrutor.setTelefone(dto.getTelefone());
         instrutor.setSalario(dto.getSalario());
         instrutor.setEspecialidade(dto.getEspecialidade());
-        instrutor.setCargo(cargoInstrutor); // Atribui o cargo programaticamente
+        instrutor.setCargo(cargoInstrutor); // Atribui o cargo automaticamente
 
         Role instrutorRole = roleRepository.findByName("ROLE_INSTRUTOR")
                 .orElseThrow(() -> new ResourceNotFoundException("Role ROLE_INSTRUTOR não encontrada."));
@@ -67,10 +67,10 @@ public class FuncionarioService {
         administrador.setSenha(passwordEncoder.encode(dto.getSenha())); // Senha obrigatória para novo registro
         administrador.setTelefone(dto.getTelefone());
         administrador.setSalario(dto.getSalario());
-        administrador.setCargo(cargoAdministrador); // Atribui o cargo programaticamente
+        administrador.setCargo(cargoAdministrador); // Atribui o cargo automaticamente
 
-        // MUDANÇA AQUI: Altere "ROLE_ADMINISTRADOR" para "ROLE_ADMIN"
-        Role adminRole = roleRepository.findByName("ROLE_ADMIN") // <--- ALTERADO PARA "ROLE_ADMIN"
+
+        Role adminRole = roleRepository.findByName("ROLE_ADMIN")
                 .orElseThrow(() -> new ResourceNotFoundException("Role ROLE_ADMIN não encontrada."));
         administrador.getRoles().add(adminRole);
 
@@ -108,17 +108,7 @@ public class FuncionarioService {
         funcionario.setTelefone(dto.getTelefone());
         funcionario.setSalario(dto.getSalario());
 
-        // AQUI ESTÁ O PONTO CRÍTICO:
-        // Se a atualização de cargo for permitida, ela deve ser feita com MUITO CUIDADO
-        // e provavelmente apenas por ADMIN. Além disso, o DTO não deve ter cargoId.
-        // O cliente da API não deve decidir o cargo por ID.
-        // Se você permitir a mudança de cargo através do "atualizar" genérico,
-        // você precisará de outro mecanismo (e.g., um endpoint específico para "mudarCargo")
-        // ou validar rigorosamente o tipo de funcionário e o cargo de destino.
-        // POR ENQUANTO, REMOVO A LÓGICA DE ATUALIZAÇÃO DE CARGO PELO DTO GENÉRICO.
-        // Isso impede que um "update" genérico altere o cargo de forma arbitrária.
-        // Se precisar alterar o cargo, você faria isso com lógica específica:
-        // ex: if (dto instanceof AdministradorRequestDTO) { // lógica específica }
+
 
         // Atualização da senha (se fornecida e não vazia)
         if (dto.getSenha() != null && !dto.getSenha().isBlank()) {
@@ -142,13 +132,13 @@ public class FuncionarioService {
         dto.setId(f.getId());
         dto.setNome(f.getNome());
         dto.setEmail(f.getEmail());
-        dto.setTelefone(f.getTelefone()); // Adicionado
-        dto.setSalario(f.getSalario());   // Adicionado
+        dto.setTelefone(f.getTelefone());
+        dto.setSalario(f.getSalario());
 
-        // Verifique se o cargo não é nulo antes de acessar seus métodos
+
         if (f.getCargo() != null) {
             dto.setCargoNome(f.getCargo().getNomeCargo());
-            dto.setCargoId(f.getCargo().getId()); // CargoId pode ser útil no response
+            dto.setCargoId(f.getCargo().getId());
         }
 
 
@@ -163,9 +153,9 @@ public class FuncionarioService {
             dto.setEspecialidade(instrutor.getEspecialidade());
         } else if (f instanceof Administrador administrador) {
             dto.setTipoFuncionario("Administrador");
-            // dto.setDepartamentoGerenciado(administrador.getDepartamentoGerenciado());
+
         } else {
-            dto.setTipoFuncionario("Funcionario Geral"); // Para casos que não são Administrador nem Instrutor
+            dto.setTipoFuncionario("Funcionario Geral");
         }
 
         return dto;

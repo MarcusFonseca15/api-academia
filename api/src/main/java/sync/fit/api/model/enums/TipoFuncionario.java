@@ -1,5 +1,4 @@
 package sync.fit.api.model.enums;
-// sync.fit.api.model.enums.TipoFuncionario.java
 
 
 public enum TipoFuncionario {

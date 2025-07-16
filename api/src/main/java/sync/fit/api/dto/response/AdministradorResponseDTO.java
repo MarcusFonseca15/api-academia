@@ -6,13 +6,13 @@ import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
-import java.util.Set; // Para as roles
+import java.util.Set;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonInclude(JsonInclude.Include.NON_NULL) // Opcional, mas útil para DTOs de resposta
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class AdministradorResponseDTO {
     private Long id;
     private String nome;
@@ -21,8 +21,8 @@ public class AdministradorResponseDTO {
     private Long cargoId;
     private Double salario;
 
-    private Set<String> roles; // Roles específicas do Administrador
+    private Set<String> roles;
 
-    // Adicione campos específicos para Administrador, se houver
-    // private String departamentoGerenciado;
+    // Adicione campos específicos para Administrador
+
 }

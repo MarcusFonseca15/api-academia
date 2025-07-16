@@ -18,7 +18,7 @@ public class InstrutorResponseDTO {
     private String cargoNome;
     private Long cargoId;
     private Double salario;
-    private String especialidade; // Campo específico de instrutor
+    private String especialidade;
 
-    private Set<String> roles; // Opcional: Se quiser que o DTO de Instrutor também tenha as roles
+    private Set<String> roles;
 }

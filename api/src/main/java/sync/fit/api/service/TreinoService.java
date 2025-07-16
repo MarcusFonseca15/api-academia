@@ -54,7 +54,7 @@ public class TreinoService {
             return ex;
         }).toList();
 
-        dto.setExercicios(exercicios); // usa o campo da DTO
+        dto.setExercicios(exercicios);
         return dto;
     }
 }

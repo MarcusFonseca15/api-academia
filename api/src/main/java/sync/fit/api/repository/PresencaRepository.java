@@ -13,5 +13,5 @@ import java.util.List;
 public interface PresencaRepository extends JpaRepository<Presenca, Long> {
     List<Presenca> findByCliente(Cliente cliente);
     List<Presenca> findByDataHoraRegistroBetween(LocalDateTime start, LocalDateTime end);
-    // Você pode adicionar métodos para contar presenças por período, etc.
+
 }

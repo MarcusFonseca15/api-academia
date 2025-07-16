@@ -6,7 +6,7 @@ import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
-import java.math.BigDecimal; // IMPORTAR BigDecimal
+import java.math.BigDecimal;
 import java.util.Set;
 
 @Getter
@@ -20,18 +20,12 @@ public class FuncionarioResponseDTO {
     private String email;
     private String cargoNome;
     private Long cargoId;
-    private BigDecimal salario; // <--- Mude para BigDecimal (se for esse o tipo na sua entidade)
-    private String telefone;    // <--- ADICIONE ESTE CAMPO
+    private BigDecimal salario;
+    private String telefone;
     private String tipoFuncionario;
 
     private Set<String> roles;
 
-    // Campos específicos para Instrutor
     private String especialidade;
 
-    // Campos específicos para Administrador
-    // private String departamentoGerenciado;
-
-    // Campos específicos para Recepcionista
-    private String turnoPreferencial;
 }

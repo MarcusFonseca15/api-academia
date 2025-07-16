@@ -35,16 +35,4 @@ public class AdministradorController {
         return ResponseEntity.ok(administrador);
     }
 
-    // Opcional: Endpoints para criar, atualizar e deletar Administradores, se não forem feitos no FuncionarioController
-    // @PostMapping
-    // @PreAuthorize("hasRole('ADMIN')")
-    // public ResponseEntity<AdministradorResponseDTO> createAdministrador(@Valid @RequestBody AdministradorRequestDTO dto) { ... }
-
-    // @PutMapping("/{id}")
-    // @PreAuthorize("hasRole('ADMIN')")
-    // public ResponseEntity<AdministradorResponseDTO> updateAdministrador(@PathVariable Long id, @Valid @RequestBody AdministradorRequestDTO dto) { ... }
-
-    // @DeleteMapping("/{id}")
-    // @PreAuthorize("hasRole('ADMIN')")
-    // public ResponseEntity<Void> deleteAdministrador(@PathVariable Long id) { ... }
 }

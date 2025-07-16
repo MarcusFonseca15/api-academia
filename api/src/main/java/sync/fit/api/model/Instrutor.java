@@ -1,5 +1,5 @@
 
-// sync.fit.api.model.Instrutor.java
+
 package sync.fit.api.model;
 
 import jakarta.persistence.Column;
@@ -26,10 +26,10 @@ public class Instrutor extends Funcionario {
     @Column(nullable = false)
     private String especialidade;
 
-    @OneToMany(mappedBy = "instrutor") // Um instrutor pode ter vários clientes (alunos)
+    @OneToMany(mappedBy = "instrutor")
     private List<Cliente> alunos = new ArrayList<>();
 
-    // Construtor para Instrutor
+
     public Instrutor(String nome, String email, String senha, String telefone, BigDecimal salario, Cargo cargo, String especialidade) {
         super(nome, email, senha, telefone, salario, cargo);
         this.especialidade = especialidade;

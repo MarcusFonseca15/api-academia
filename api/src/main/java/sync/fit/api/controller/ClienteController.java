@@ -1,10 +1,11 @@
 package sync.fit.api.controller;
 
-import sync.fit.api.dto.request.ClienteRequestDTO;
+import sync.fit.api.dto.request.ClienteAdminUpdateDTO; // Importe o DTO renomeado
+import sync.fit.api.dto.request.ClienteUpdateProfileDTO; // Importe o novo DTO
 import sync.fit.api.dto.request.ClienteRegisterRequestDTO;
 import sync.fit.api.dto.response.ClienteResponseDTO;
 import sync.fit.api.model.Cliente;
-import sync.fit.api.model.UserIdentifiable; // Certifique-se de importar
+import sync.fit.api.model.UserIdentifiable;
 import sync.fit.api.service.ClienteService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,38 +25,38 @@ public class ClienteController {
 
     private final ClienteService clienteService;
 
-    // Apenas ADMIN ou RECEPCIONISTA podem listar todos os clientes
-    @PreAuthorize("hasAnyRole('ADMIN', 'RECEPCIONISTA')")
+    // Apenas ADMIN pode listar todos os clientes
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @GetMapping
     public ResponseEntity<List<ClienteResponseDTO>> getAllClientes() {
         List<ClienteResponseDTO> clientes = clienteService.findAll();
         return ResponseEntity.ok(clientes);
     }
 
-    // ADMIN, INSTRUTOR, RECEPCIONISTA podem ver qualquer cliente.
+    // ADMIN, INSTRUTOR podem ver qualquer cliente.
     // CLIENTE só pode ver a si mesmo (se o ID na URL for o seu próprio ID logado).
-    @PreAuthorize("hasAnyRole('ADMIN', 'INSTRUTOR', 'RECEPCIONISTA') or (hasRole('CLIENTE') and #id == authentication.principal.id)")
+    @PreAuthorize("hasAnyRole('ADMIN', 'INSTRUTOR') or (hasRole('CLIENTE') and #id == authentication.principal.id)")
     @GetMapping("/{id}")
     public ResponseEntity<ClienteResponseDTO> getClienteById(@PathVariable Long id) {
         ClienteResponseDTO cliente = clienteService.findById(id);
         return ResponseEntity.ok(cliente);
     }
 
-    // Apenas ADMIN ou RECEPCIONISTA podem criar um cliente
-    @PreAuthorize("hasAnyRole('ADMIN', 'RECEPCIONISTA')")
+    // Apenas ADMIN pode criar um cliente
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @PostMapping
     public ResponseEntity<ClienteResponseDTO> createCliente(@Valid @RequestBody ClienteRegisterRequestDTO requestDTO) {
         ClienteResponseDTO cliente = clienteService.save(requestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(cliente);
     }
 
-    // Apenas ADMIN ou RECEPCIONISTA podem atualizar um cliente específico
-    @PreAuthorize("hasAnyRole('ADMIN', 'RECEPCIONISTA')")
+    // Apenas ADMIN pode atualizar um cliente específico
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<ClienteResponseDTO> updateCliente(
             @PathVariable Long id,
-            @Valid @RequestBody ClienteRequestDTO requestDTO) {
-        ClienteResponseDTO cliente = clienteService.update(id, requestDTO);
+            @Valid @RequestBody ClienteAdminUpdateDTO requestDTO) { // <--- USANDO ClienteAdminUpdateDTO
+        ClienteResponseDTO cliente = clienteService.updateByAdmin(id, requestDTO); // <--- NOVO MÉTODO NO SERVICE
         return ResponseEntity.ok(cliente);
     }
 
@@ -74,7 +75,7 @@ public class ClienteController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserIdentifiable userLogado = (UserIdentifiable) authentication.getPrincipal();
 
-        if (!(userLogado instanceof Cliente)) { // Verificação de tipo para segurança
+        if (!(userLogado instanceof Cliente)) {
             throw new SecurityException("Acesso negado: Usuário autenticado não é um Cliente.");
         }
         ClienteResponseDTO meuPerfil = clienteService.findById(userLogado.getId());
@@ -84,14 +85,14 @@ public class ClienteController {
     // Cliente pode atualizar seu próprio perfil
     @PreAuthorize("hasRole('CLIENTE')")
     @PutMapping("/meu-perfil")
-    public ResponseEntity<ClienteResponseDTO> updateMeuPerfil(@Valid @RequestBody ClienteRequestDTO requestDTO) {
+    public ResponseEntity<ClienteResponseDTO> updateMeuPerfil(@Valid @RequestBody ClienteUpdateProfileDTO requestDTO) { // <--- USANDO ClienteUpdateProfileDTO
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserIdentifiable userLogado = (UserIdentifiable) authentication.getPrincipal();
 
-        if (!(userLogado instanceof Cliente)) { // Verificação de tipo para segurança
+        if (!(userLogado instanceof Cliente)) {
             throw new SecurityException("Acesso negado: Usuário autenticado não é um Cliente.");
         }
-        ClienteResponseDTO updatedCliente = clienteService.update(userLogado.getId(), requestDTO);
+        ClienteResponseDTO updatedCliente = clienteService.updateProfile(userLogado.getId(), requestDTO); // <--- NOVO MÉTODO NO SERVICE
         return ResponseEntity.ok(updatedCliente);
     }
 }

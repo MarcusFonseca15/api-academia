@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-// import lombok.AllArgsConstructor; // Removendo @AllArgsConstructor para gerenciar construtores manualmente
+
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,9 +16,9 @@ import java.util.stream.Collectors;
 @Entity
 @Table(name = "cliente")
 @Data
-@NoArgsConstructor // Mantém o construtor sem argumentos para JPA
+@NoArgsConstructor
 @EqualsAndHashCode(of = "id")
-// @AllArgsConstructor // <--- Remova ou comente esta anotação se você quiser gerenciar os construtores manualmente
+
 public class Cliente implements UserDetails, UserIdentifiable {
 
     @Id
@@ -44,11 +44,6 @@ public class Cliente implements UserDetails, UserIdentifiable {
     @JoinColumn(name = "plano_id", nullable = true)
     private Plano plano;
 
-    // REMOVIDO: Relacionamento com Administrador
-    // @ManyToOne(fetch = FetchType.LAZY)
-    // @JoinColumn(name = "administrador_id", nullable = true)
-    // private Administrador administrador;
-
 
     @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Presenca> presencas = new ArrayList<>();
@@ -65,7 +60,7 @@ public class Cliente implements UserDetails, UserIdentifiable {
     )
     private Set<Role> roles = new HashSet<>();
 
-    // Construtor para conveniência - ATUALIZADO: REMOVIDO 'Administrador administrador'
+
     public Cliente(String nome, String email, String senha, LocalDate dataNascimento, String telefone, Plano plano, Instrutor instrutor) {
         this.nome = nome;
         this.email = email;
@@ -73,11 +68,11 @@ public class Cliente implements UserDetails, UserIdentifiable {
         this.dataNascimento = dataNascimento;
         this.telefone = telefone;
         this.plano = plano;
-        // this.administrador = administrador; // Removido
+
         this.instrutor = instrutor;
     }
 
-    // --- Métodos UserDetails e UserIdentifiable (permanecem inalterados) ---
+    // --- Métodos UserDetails e UserIdentifiable
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return this.roles.stream()

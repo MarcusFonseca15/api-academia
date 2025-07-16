@@ -5,13 +5,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
+
 
 @Entity
 @Table(name = "plano")
-@Data // ✅ Gera getters, setters, equals, hashCode, toString
-@NoArgsConstructor // ✅ Construtor padrão
-@AllArgsConstructor // ✅ Construtor com todos os parâmetros
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Plano {
 
     @Id

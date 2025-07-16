@@ -29,13 +29,10 @@ public class PresencaController {
 
         // É crucial verificar se o usuário logado é realmente um Cliente
         if (!(userLogado instanceof sync.fit.api.model.Cliente)) {
-            // Isso deve ser tratado por um SecurityConfig mais rigoroso ou um BadRequest/Forbidden
-            // para garantir que apenas clientes cheguem a esta rota.
-            // Por enquanto, lança uma exceção.
             throw new IllegalArgumentException("Somente clientes podem marcar presença nesta rota.");
         }
 
-        Long clienteId = userLogado.getId(); // O ID do cliente logado
+        Long clienteId = userLogado.getId();
 
         PresencaResponse presenca = presencaService.registrarPresenca(clienteId);
         return ResponseEntity.ok(presenca);
@@ -43,7 +40,7 @@ public class PresencaController {
 
     // Rota para administradores/instrutores marcarem presença para um cliente específico
     @PostMapping("/cliente/{clienteId}/marcar")
-    @PreAuthorize("hasAnyRole('INSTRUTOR', 'ADMIN')") // Instrutor ou Admin pode marcar para qualquer um
+    @PreAuthorize("hasAnyRole('INSTRUTOR', 'ADMIN')")
     public ResponseEntity<PresencaResponse> marcarPresencaParaCliente(@PathVariable Long clienteId) {
         PresencaResponse presenca = presencaService.registrarPresenca(clienteId);
         return ResponseEntity.ok(presenca);
@@ -51,7 +48,7 @@ public class PresencaController {
 
     // Rota para o cliente ver seu próprio histórico de presença
     @GetMapping("/historico")
-    @PreAuthorize("hasRole('CLIENTE')") // Cliente só pode ver o próprio histórico
+    @PreAuthorize("hasRole('CLIENTE')")
     public ResponseEntity<List<PresencaResponse>> getMeuHistoricoCliente() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserIdentifiable userLogado = (UserIdentifiable) authentication.getPrincipal();
@@ -81,7 +78,6 @@ public class PresencaController {
             @RequestParam("dataInicio") String dataInicio,
             @RequestParam("dataFim") String dataFim) {
         // Parsear as datas. Use um formato ISO_LOCAL_DATE_TIME (YYYY-MM-DDTHH:MM:SS)
-        // para facilitar. Ex: "2025-07-01T00:00:00" e "2025-07-31T23:59:59"
         LocalDateTime start = LocalDateTime.parse(dataInicio);
         LocalDateTime end = LocalDateTime.parse(dataFim);
         List<PresencaResponse> frequencia = presencaService.getFrequenciaGeral(start, end);

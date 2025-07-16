@@ -33,9 +33,6 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 
-    // Você pode adicionar mais @ExceptionHandler para outras exceções comuns, como:
-    // @ExceptionHandler(DataIntegrityViolationException.class) // Para erros de banco de dados
-    // @ExceptionHandler(Exception.class) // Para exceções genéricas
     public ResponseEntity<ErrorDetails> handleGlobalException(Exception ex, WebRequest request) {
         ErrorDetails errorDetails = new ErrorDetails(
                 LocalDateTime.now(),

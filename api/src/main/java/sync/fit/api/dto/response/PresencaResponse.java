@@ -5,6 +5,6 @@ import java.time.LocalDateTime;
 public record PresencaResponse(
         Long id,
         Long clienteId,
-        String clienteNome, // Opcional, para facilitar a visualização
+        String clienteNome,
         LocalDateTime dataHoraRegistro
 ) {}

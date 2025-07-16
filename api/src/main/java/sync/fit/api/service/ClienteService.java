@@ -1,16 +1,15 @@
 package sync.fit.api.service;
 
-import sync.fit.api.dto.request.ClienteRequestDTO;
+import sync.fit.api.dto.request.ClienteAdminUpdateDTO; // Importe o DTO renomeado
+import sync.fit.api.dto.request.ClienteUpdateProfileDTO; // Importe o novo DTO
 import sync.fit.api.dto.request.ClienteRegisterRequestDTO;
 import sync.fit.api.dto.response.ClienteResponseDTO;
 import sync.fit.api.exception.ResourceNotFoundException;
 import sync.fit.api.mapper.ClienteMapper;
-// import sync.fit.api.model.Administrador; // REMOVIDO
 import sync.fit.api.model.Cliente;
 import sync.fit.api.model.Plano;
 import sync.fit.api.model.Role;
 import sync.fit.api.model.Instrutor;
-// import sync.fit.api.repository.AdministradorRepository; // REMOVIDO
 import sync.fit.api.repository.ClienteRepository;
 import sync.fit.api.repository.PlanoRepository;
 import sync.fit.api.repository.RoleRepository;
@@ -32,7 +31,6 @@ public class ClienteService {
 
     private final ClienteRepository clienteRepository;
     private final PlanoRepository planoRepository;
-    // REMOVIDO: private final AdministradorRepository administradorRepository;
     private final InstrutorRepository instrutorRepository;
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
@@ -54,10 +52,6 @@ public class ClienteService {
 
     @Transactional
     public ClienteResponseDTO save(ClienteRegisterRequestDTO requestDTO) {
-        // REMOVIDO: Lógica para buscar Administrador
-        // Administrador administrador = administradorRepository.findById(requestDTO.getAdministradorId())
-        //         .orElseThrow(() -> new ResourceNotFoundException("Administrador não encontrado com ID: " + requestDTO.getAdministradorId()));
-
         Plano plano = null;
         if (requestDTO.getPlanoId() != null) {
             plano = planoRepository.findById(requestDTO.getPlanoId())
@@ -74,19 +68,17 @@ public class ClienteService {
             throw new IllegalArgumentException("Email já cadastrado.");
         }
 
-        // Use o construtor da entidade Cliente que não recebe Administrador
         Cliente cliente = new Cliente(
                 requestDTO.getNome(),
                 requestDTO.getEmail(),
                 passwordEncoder.encode(requestDTO.getSenha()),
                 requestDTO.getDataNascimento(),
                 requestDTO.getTelefone(),
-                plano, // Pode ser null
-                instrutor // Pode ser null
+                plano,
+                instrutor
         );
 
         cliente.setPlano(plano);
-        // REMOVIDO: cliente.setAdministrador(administrador);
         cliente.setInstrutor(instrutor);
 
         Role clienteRole = roleRepository.findByName("ROLE_CLIENTE")
@@ -97,8 +89,9 @@ public class ClienteService {
         return clienteMapper.toResponseDTO(salvo);
     }
 
+    // NOVO MÉTODO: Atualização de perfil pelo CLIENTE
     @Transactional
-    public ClienteResponseDTO update(Long id, ClienteRequestDTO requestDTO) {
+    public ClienteResponseDTO updateProfile(Long id, ClienteUpdateProfileDTO requestDTO) {
         Cliente existingCliente = clienteRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado com ID: " + id));
 
@@ -110,27 +103,50 @@ public class ClienteService {
         existingCliente.setNome(requestDTO.getNome());
         existingCliente.setEmail(requestDTO.getEmail());
         existingCliente.setTelefone(requestDTO.getTelefone());
-        existingCliente.setDataNascimento(requestDTO.getDataNascimento()); // Adicionado para atualizar
+        existingCliente.setDataNascimento(requestDTO.getDataNascimento());
 
-        // Atualiza Plano
+
+
+        if (requestDTO.getSenha() != null && !requestDTO.getSenha().isBlank()) {
+            existingCliente.setSenha(passwordEncoder.encode(requestDTO.getSenha()));
+        }
+
+        Cliente atualizado = clienteRepository.save(existingCliente);
+        return clienteMapper.toResponseDTO(atualizado);
+    }
+
+    // MÉTODO EXISTENTE, AGORA PARA ATUALIZAÇÃO PELO ADMINISTRADOR
+    @Transactional
+    public ClienteResponseDTO updateByAdmin(Long id, ClienteAdminUpdateDTO requestDTO) {
+        Cliente existingCliente = clienteRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado com ID: " + id));
+
+        if (!existingCliente.getEmail().equals(requestDTO.getEmail())
+                && clienteRepository.findByEmail(requestDTO.getEmail()).isPresent()) {
+            throw new IllegalArgumentException("Email já cadastrado para outro cliente.");
+        }
+
+        existingCliente.setNome(requestDTO.getNome());
+        existingCliente.setEmail(requestDTO.getEmail());
+        existingCliente.setTelefone(requestDTO.getTelefone());
+        existingCliente.setDataNascimento(requestDTO.getDataNascimento());
+
+        // Lógica para atualização de Plano pelo ADMIN
         if (requestDTO.getPlanoId() != null) {
             Plano novoPlano = planoRepository.findById(requestDTO.getPlanoId())
                     .orElseThrow(() -> new ResourceNotFoundException("Plano não encontrado com ID: " + requestDTO.getPlanoId()));
             existingCliente.setPlano(novoPlano);
         } else {
-            existingCliente.setPlano(null); // Permite remover o plano
+            existingCliente.setPlano(null); // Permite remover o plano pelo ADMIN
         }
 
-        // REMOVIDO: Lógica de atualização de Administrador
-        // if (requestDTO.getAdministradorId() != null ... ) { ... }
-
-        // Atualiza Instrutor
+        // Lógica para atualização de Instrutor pelo ADMIN
         if (requestDTO.getInstrutorId() != null) {
             Instrutor novoInstrutor = instrutorRepository.findById(requestDTO.getInstrutorId())
                     .orElseThrow(() -> new ResourceNotFoundException("Instrutor não encontrado com ID: " + requestDTO.getInstrutorId()));
             existingCliente.setInstrutor(novoInstrutor);
         } else {
-            existingCliente.setInstrutor(null); // Permite remover o instrutor
+            existingCliente.setInstrutor(null); // Permite remover o instrutor pelo ADMIN
         }
 
         if (requestDTO.getSenha() != null && !requestDTO.getSenha().isBlank()) {

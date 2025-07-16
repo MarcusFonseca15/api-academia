@@ -7,8 +7,8 @@ import lombok.experimental.SuperBuilder;
 
 @Getter
 @Setter
-@NoArgsConstructor // <--- ESSENCIAL PARA O JACKSON DESERIALIZAR
+@NoArgsConstructor
 @SuperBuilder
 public class AdministradorRequestDTO extends FuncionarioRequestDTO {
-    // Campos específicos para Administrador na atualização, se houver
+    // Campos específicos para Administrador na atualização
 }

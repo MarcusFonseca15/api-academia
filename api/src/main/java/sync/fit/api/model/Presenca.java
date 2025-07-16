@@ -25,7 +25,7 @@ public class Presenca {
     @Column(nullable = false)
     private LocalDateTime dataHoraRegistro;
 
-    // Construtor para facilitar a criação de uma nova presença
+
     public Presenca(Cliente cliente) {
         this.cliente = cliente;
         this.dataHoraRegistro = LocalDateTime.now();

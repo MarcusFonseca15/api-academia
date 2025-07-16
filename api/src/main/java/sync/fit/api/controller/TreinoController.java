@@ -1,6 +1,7 @@
 package sync.fit.api.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import sync.fit.api.dto.request.TreinoRequestDTO;
 import sync.fit.api.dto.response.TreinoResponseDTO;
@@ -15,10 +16,12 @@ public class TreinoController {
     @Autowired
     private TreinoService treinoService;
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'INSTRUTOR')")
     @PostMapping
     public TreinoResponseDTO criar(@RequestBody TreinoRequestDTO dto) {
         return treinoService.criar(dto);
     }
+
 
     @GetMapping
     public List<TreinoResponseDTO> listarTodos() {

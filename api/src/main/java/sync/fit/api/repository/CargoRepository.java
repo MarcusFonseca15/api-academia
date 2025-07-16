@@ -6,5 +6,5 @@ import sync.fit.api.model.Cargo;
 import java.util.Optional;
 
 public interface CargoRepository extends JpaRepository<Cargo, Long> {
-    Optional<Cargo> findByNomeCargo(String nomeCargo); // <--- Confirme este método
+    Optional<Cargo> findByNomeCargo(String nomeCargo);
 }

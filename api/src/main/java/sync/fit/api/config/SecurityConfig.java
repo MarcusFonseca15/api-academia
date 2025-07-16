@@ -49,7 +49,6 @@ public class SecurityConfig {
                         // O @PreAuthorize nos Controllers fará a verificação de role após a autenticação.
 
                         // Exemplo de outras regras de autorização baseadas em role (APÓS AUTENTICAÇÃO)
-                        // Por exemplo, GET /api/funcionarios exige role ADMIN
                         .requestMatchers(HttpMethod.GET, "/api/funcionarios").hasRole("ADMIN")
 
                         // Rotas para criar novos tipos de funcionários (exigem AUTHENTICAÇÃO + ADMIN role)

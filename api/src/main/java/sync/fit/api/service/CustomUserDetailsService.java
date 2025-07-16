@@ -17,7 +17,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        // Tenta encontrar o usuário como funcionário (Administrador, Instrutor, Recepcionista)
+        // Tenta encontrar o usuário como funcionário (Administrador, Instrutor)
         return funcionarioRepository.findByEmail(email)
                 .map(funcionario -> (UserDetails) funcionario) // Se encontrar, retorna como UserDetails
                 // Se não encontrar como funcionário, tenta encontrar como cliente

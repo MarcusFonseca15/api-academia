@@ -29,7 +29,7 @@ public class AuthController {
         return ResponseEntity.ok(response);
     }
 
-    // Cliente pode se auto-registrar (público)
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/register/cliente")
     public ResponseEntity<AuthResponseDTO> registerCliente(@Valid @RequestBody ClienteRegisterRequestDTO request) {
         AuthResponseDTO response = authService.registerCliente(request);
@@ -51,10 +51,4 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-//    @PreAuthorize("hasRole('ADMIN')")
-//    @PostMapping("/register/recepcionista")
-//    public ResponseEntity<AuthResponseDTO> registerRecepcionista(@Valid @RequestBody RecepcionistaRegisterRequestDTO request) {
-//        AuthResponseDTO response = authService.registerRecepcionista(request);
-//        return ResponseEntity.status(HttpStatus.CREATED).body(response);
-//    }
 }

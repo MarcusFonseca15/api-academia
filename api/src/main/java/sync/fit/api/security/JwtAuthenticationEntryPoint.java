@@ -18,9 +18,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
     public void commence(HttpServletRequest request,
                          HttpServletResponse response,
                          AuthenticationException authException) throws IOException, ServletException {
-        // Envia uma resposta de erro 401 Unauthorized
-        // Isso será chamado quando um usuário tentar acessar uma URL protegida
-        // sem autenticação, ou com um token inválido/expirado.
+
         response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized: " + authException.getMessage());
     }
 }

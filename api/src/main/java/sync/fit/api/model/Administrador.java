@@ -13,16 +13,16 @@ import java.math.BigDecimal;
 
 @Entity
 @Table(name = "administrador")
-@PrimaryKeyJoinColumn(name = "id") // Mapeia o ID para a tabela pai (funcionario)
+@PrimaryKeyJoinColumn(name = "id")
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class Administrador extends Funcionario {
 
-    // Construtor para Administrador
+
     public Administrador(String nome, String email, String senha, String telefone, BigDecimal salario, Cargo cargo) {
         super(nome, email, senha, telefone, salario, cargo);
     }
-    // Pode ter campos específicos de Administrador aqui, se necessário
-    // private String departamentoGerenciado;
+
+
 }

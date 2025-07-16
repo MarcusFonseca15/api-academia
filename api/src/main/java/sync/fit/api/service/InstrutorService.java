@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 public class InstrutorService {
 
     private final InstrutorRepository instrutorRepository;
-    private final InstrutorMapper instrutorMapper; // Injetado automaticamente pelo Spring
+    private final InstrutorMapper instrutorMapper;
 
     @Transactional(readOnly = true)
     public InstrutorResponseDTO findById(Long id) {
@@ -40,7 +40,7 @@ public class InstrutorService {
                 .orElseThrow(() -> new ResourceNotFoundException("Instrutor não encontrado com ID: " + instrutorId));
 
         // Mapeia a coleção diretamente usando o ClienteMapper via InstrutorMapper
-        // Isso assume que InstrutorMapper tem o método toClienteResponseDTOList
+
         return instrutorMapper.toClienteResponseDTOList(instrutor.getAlunos());
     }
 }

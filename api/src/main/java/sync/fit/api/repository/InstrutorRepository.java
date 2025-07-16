@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface InstrutorRepository extends JpaRepository<Instrutor, Long> {
-    // Métodos de consulta específicos para Instrutor, se precisar
+    // Métodos de consulta específicos para Instrutor
 }

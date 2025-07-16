@@ -6,10 +6,10 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
 @Entity
-@Table(name = "role") // Nome da tabela no banco de dados
-@Data // Gera getters, setters, toString, equals e hashCode
-@NoArgsConstructor // Construtor sem argumentos
-@AllArgsConstructor // Construtor com todos os argumentos
+@Table(name = "role")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Role {
 
     @Id
@@ -17,9 +17,8 @@ public class Role {
     private Long id;
 
     @Column(nullable = false, unique = true)
-    private String name; // Ex: "ROLE_ADMIN", "ROLE_CLIENTE"
+    private String name; // "ROLE_ADMIN", "ROLE_INSTRUTOR", "ROLE_CLIENTE"
 
-    // Construtor adicional se preferir
     public Role(String name) {
         this.name = name;
     }

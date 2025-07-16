@@ -3,12 +3,12 @@ package sync.fit.api.dto.request;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.NoArgsConstructor; // <--- REINTRODUZIR
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 @Getter
 @Setter
-@NoArgsConstructor // <--- ESSENCIAL PARA O JACKSON DESERIALIZAR
+@NoArgsConstructor
 @SuperBuilder
 public class InstrutorRequestDTO extends FuncionarioRequestDTO {
     @NotBlank(message = "A especialidade é obrigatória para um instrutor")

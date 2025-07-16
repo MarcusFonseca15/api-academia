@@ -32,8 +32,5 @@ public class AdministradorService {
         return administradorMapper.toResponseDTO(administrador);
     }
 
-    // Métodos de criação, atualização e exclusão específicos de Administrador, se necessário
-    // Ex: public AdministradorResponseDTO save(AdministradorRequestDTO dto) { ... }
-    // Ex: public AdministradorResponseDTO update(Long id, AdministradorRequestDTO dto) { ... }
-    // Ex: public void delete(Long id) { ... }
+
 }

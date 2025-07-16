@@ -1,6 +1,7 @@
 package sync.fit.api.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import sync.fit.api.dto.request.ExercicioRequestDTO;
 import sync.fit.api.dto.response.ExercicioResponseDTO;
@@ -15,6 +16,7 @@ public class ExercicioController {
     @Autowired
     private ExercicioService exercicioService;
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'INSTRUTOR')")
     @PostMapping
     public ExercicioResponseDTO criar(@RequestBody ExercicioRequestDTO dto) {
         return exercicioService.criar(dto);

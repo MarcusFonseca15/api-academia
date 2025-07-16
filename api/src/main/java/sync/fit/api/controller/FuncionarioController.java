@@ -8,10 +8,9 @@ import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
-// Importe os DTOs atualizados (sem cargoId)
-import sync.fit.api.dto.request.AdministradorRequestDTO; // Agora sem cargoId
+import sync.fit.api.dto.request.AdministradorRequestDTO;
 import sync.fit.api.dto.request.FuncionarioRequestDTO;
-import sync.fit.api.dto.request.InstrutorRequestDTO;     // Agora sem cargoId
+import sync.fit.api.dto.request.InstrutorRequestDTO;
 import sync.fit.api.dto.response.FuncionarioResponseDTO;
 import sync.fit.api.service.FuncionarioService;
 
@@ -25,7 +24,7 @@ public class FuncionarioController {
     private final FuncionarioService funcionarioService;
 
     // Criar Administrador: Apenas ADMIN pode fazer isso
-    @PreAuthorize("hasRole('ADMIN')") // Use o nome completo da Role
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/administradores")
     public ResponseEntity<FuncionarioResponseDTO> criarAdministrador(@Valid @RequestBody AdministradorRequestDTO dto) {
         // O cargo é definido internamente no FuncionarioService.criarAdministrador
@@ -34,7 +33,7 @@ public class FuncionarioController {
     }
 
     // Criar Instrutor: Apenas ADMIN pode fazer isso
-    @PreAuthorize("hasRole('ADMIN')") // Use o nome completo da Role
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/instrutores")
     public ResponseEntity<FuncionarioResponseDTO> criarInstrutor(@Valid @RequestBody InstrutorRequestDTO dto) {
         // O cargo é definido internamente no FuncionarioService.criarInstrutor
@@ -42,18 +41,18 @@ public class FuncionarioController {
         return ResponseEntity.status(HttpStatus.CREATED).body(novoInstrutor);
     }
 
-    // Listar todos os funcionários: Apenas ADMIN ou Recepcionista
-    @PreAuthorize("hasAnyRole('ADMIN', 'RECEPCIONISTA')")
+    // Listar todos os funcionários: Apenas ADMIN
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @GetMapping
     public ResponseEntity<List<FuncionarioResponseDTO>> listarTodosFuncionarios() {
         List<FuncionarioResponseDTO> funcionarios = funcionarioService.listarTodos();
         return ResponseEntity.ok(funcionarios);
     }
 
-    // Buscar funcionário por ID: ADMIN, INSTRUTOR, RECEPCIONISTA.
+    // Buscar funcionário por ID: ADMIN, INSTRUTOR.
     // Instrutor pode ver a si mesmo. Recepcionista também.
     // ADMIN pode ver qualquer um.
-    @PreAuthorize("hasAnyRole('ADMIN', 'INSTRUTOR', 'RECEPCIONISTA') or (hasRole('INSTRUTOR') and #id == authentication.principal.id) or (hasRole('RECEPCIONISTA') and #id == authentication.principal.id)")
+    @PreAuthorize("hasAnyRole('ADMIN', 'INSTRUTOR') or (hasRole('INSTRUTOR') and #id == authentication.principal.id) or (hasRole('RECEPCIONISTA') and #id == authentication.principal.id)")
     @GetMapping("/{id}")
     public ResponseEntity<FuncionarioResponseDTO> buscarFuncionarioPorId(@PathVariable Long id) {
         FuncionarioResponseDTO funcionario = funcionarioService.buscarPorId(id);
@@ -78,17 +77,17 @@ public class FuncionarioController {
         return ResponseEntity.noContent().build();
     }
 
-    // Endpoint para um funcionário ver e atualizar seu próprio perfil (opcional, se não for genérico)
-    @PreAuthorize("hasAnyRole('ADMIN', 'INSTRUTOR', 'RECEPCIONISTA')")
+    // Endpoint para um funcionário ver e atualizar seu próprio perfil
+    @PreAuthorize("hasAnyRole('ADMIN', 'INSTRUTOR')")
     @GetMapping("/meu-perfil")
     public ResponseEntity<FuncionarioResponseDTO> getMeuPerfilFuncionario() {
-        // A lógica de segurança já garante que authentication.principal é o funcionário logado
+        // A lógica de segurança garante que authentication.principal é o funcionário logado
         Long idLogado = ((sync.fit.api.model.UserIdentifiable) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId();
         FuncionarioResponseDTO meuPerfil = funcionarioService.buscarPorId(idLogado);
         return ResponseEntity.ok(meuPerfil);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'INSTRUTOR', 'RECEPCIONISTA')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'INSTRUTOR')")
     @PutMapping("/meu-perfil")
     public ResponseEntity<FuncionarioResponseDTO> updateMeuPerfilFuncionario(@Valid @RequestBody FuncionarioRequestDTO dto) {
         Long idLogado = ((sync.fit.api.model.UserIdentifiable) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId();

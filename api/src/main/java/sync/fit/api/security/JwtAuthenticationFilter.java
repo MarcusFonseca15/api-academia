@@ -26,7 +26,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     // Lista de caminhos que o JWT filter deve IGNORAR TOTALMENTE.
     // Estes caminhos são permitidos pelo SecurityConfig sem autenticação.
-    // IMPORTANTE: /api/auth/login é adicionado aqui porque não queremos que o filtro JWT
+    // IMPORTANTE: /api/auth/login é adicionado aqui porque não que o filtro JWT
     // tente extrair ou validar um token para ele, já que é uma rota pública.
     private static final List<String> PATHS_TO_SKIP_JWT_FILTER = Arrays.asList(
             "/api/auth/login", // Apenas o login. POST requests para aqui não serão verificadas pelo JWT Filter.
@@ -47,9 +47,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final String requestUri = request.getRequestURI();
         final String requestMethod = request.getMethod(); // Pegue o método também para o login
 
-        // **PASSO 1: VERIFICAÇÃO DE ROTAS A SEREM IGNORADAS PELO FILTRO JWT**
+
         // Se a requisição for para /api/auth/login e for um POST, ou para uma das rotas do Swagger,
-        // o filtro JWT não deve fazer nada, apenas passar a requisição adiante.
+        // o filtro JWT não deve faz nada, apenas passar a requisição adiante.
         // O SecurityConfig já lidará com o 'permitAll()'.
         boolean shouldSkipJwtFilter = false;
         if (requestUri.equals("/api/auth/login") && requestMethod.equals("POST")) {
@@ -68,7 +68,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return; // Encerrar o processamento deste filtro
         }
 
-        // **PASSO 2: SE NÃO FOI IGNORADO, TENTAR PROCESSAR O JWT**
+
         final String authHeader = request.getHeader("Authorization");
         final String jwt;
         final String userEmail;
