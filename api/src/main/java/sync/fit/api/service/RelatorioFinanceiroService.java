@@ -1,6 +1,5 @@
 package sync.fit.api.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import sync.fit.api.dto.response.RelatorioClientesPorPlanoDTO;
 import sync.fit.api.repository.ClienteRepository;
@@ -12,10 +11,10 @@ import sync.fit.api.repository.InstrutorRepository;
 
 import sync.fit.api.dto.response.RelatorioFaturamentoDTO;
 import sync.fit.api.model.Cliente;
-import sync.fit.api.model.Plano; // Importe a classe Plano
+import sync.fit.api.model.Plano;
 
-// Importe o PlanoRepository
-import sync.fit.api.repository.PlanoRepository; // <--- NOVO IMPORT
+
+import sync.fit.api.repository.PlanoRepository;
 
 import lombok.RequiredArgsConstructor; // Usar RequiredArgsConstructor para injeção de dependências
 
@@ -51,16 +50,13 @@ public class RelatorioFinanceiroService {
             if (plano != null) {
                 totalFaturado += plano.getValor();
 
-                // duracaoMeses = 1 para Mensal
-                // duracaoMeses = 6 para Semestral
-                // duracaoMeses = 12 para Anual
                 switch (plano.getDuracaoMeses()) {
                     case 1 -> mensais++;
                     case 6 -> semestrais++;
                     case 12 -> anuais++;
                     default -> {
 
-                        System.out.println("Aviso: Plano com duração não padrão encontrado: " + plano.getTipo() + " - " + plano.getDuracaoMeses() + " meses");
+
                     }
                 }
             }

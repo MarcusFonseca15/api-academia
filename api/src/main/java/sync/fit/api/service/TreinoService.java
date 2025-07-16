@@ -57,4 +57,24 @@ public class TreinoService {
         dto.setExercicios(exercicios);
         return dto;
     }
+    public TreinoResponseDTO atualizarTreino(Long id, TreinoRequestDTO dto) {
+        Treino treino = treinoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("vai ficar sem treinar"));
+
+        Cliente cliente = clienteRepository.findById(dto.getClienteId())
+                .orElseThrow(() -> new RuntimeException("sem clientes, cara"));
+
+        treino.setDescricao(dto.getDescricao());
+        treino.setCliente(cliente);
+
+        Treino atualizado = treinoRepository.save(treino);
+        return toResponseDTO(atualizado);
+    }
+
+    public void deletarTreino(Long id) {
+        Treino treino = treinoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Sem treino amigo kkkk"));
+
+        treinoRepository.delete(treino);
+    }
 }
