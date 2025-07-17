@@ -52,16 +52,11 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/funcionarios").hasRole("ADMIN")
 
                         // Rotas para criar novos tipos de funcionários (exigem AUTHENTICAÇÃO + ADMIN role)
-                        // Se você tem um controller para isso (ex: /api/funcionarios/admin, /api/funcionarios/instrutor)
-                        // Estes cairiam no anyRequest().authenticated() e seriam protegidos pelo @PreAuthorize no Controller.
-                        // Se você quiser regras de URL mais explícitas aqui:
-                        // .requestMatchers(HttpMethod.POST, "/api/funcionarios/administrador").hasRole("ADMIN") // se esta for a URL para criar admin
-                        // .requestMatchers(HttpMethod.POST, "/api/funcionarios/instrutor").hasRole("ADMIN") // se esta for a URL para criar instrutor
 
-                        // Exemplo: Todos os endpoints abaixo de /api/admin/ só podem ser acessados por ADMIN
+                        // Todos os endpoints abaixo de /api/admin/ só podem ser acessados por ADMIN
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
 
-                        // Exemplo: Todos os endpoints abaixo de /api/instrutor/ só podem ser acessados por INSTRUTOR ou Admin
+                        // Todos os endpoints abaixo de /api/instrutor/ só podem ser acessados por INSTRUTOR ou Admin
                         .requestMatchers("/api/instrutor/**").hasAnyRole("INSTRUTOR", "ADMIN")
 
                         // Quaisquer outras requisições (incluindo TODAS as /api/auth/register/*)

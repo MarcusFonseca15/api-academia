@@ -50,8 +50,7 @@ public class FuncionarioController {
     }
 
     // Buscar funcionário por ID: ADMIN, INSTRUTOR.
-    // Instrutor pode ver a si mesmo. Recepcionista também.
-    // ADMIN pode ver qualquer um.
+    // Instrutor pode ver a si mesmo.
     @PreAuthorize("hasAnyRole('ADMIN', 'INSTRUTOR') or (hasRole('INSTRUTOR') and #id == authentication.principal.id) or (hasRole('RECEPCIONISTA') and #id == authentication.principal.id)")
     @GetMapping("/{id}")
     public ResponseEntity<FuncionarioResponseDTO> buscarFuncionarioPorId(@PathVariable Long id) {
@@ -64,7 +63,7 @@ public class FuncionarioController {
     @PutMapping("/{id}")
     public ResponseEntity<FuncionarioResponseDTO> atualizarFuncionario(
             @PathVariable Long id,
-            @Valid @RequestBody FuncionarioRequestDTO dto) { // Use o DTO genérico para atualização
+            @Valid @RequestBody FuncionarioRequestDTO dto) {
         FuncionarioResponseDTO funcionarioAtualizado = funcionarioService.atualizar(id, dto);
         return ResponseEntity.ok(funcionarioAtualizado);
     }

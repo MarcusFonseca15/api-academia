@@ -1,4 +1,4 @@
-// Em sync.fit.api.repository.PresencaRepository.java
+
 package sync.fit.api.repository;
 
 import sync.fit.api.model.Cliente;

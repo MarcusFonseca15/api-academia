@@ -30,7 +30,7 @@ public class InstrutorService {
     @Transactional(readOnly = true)
     public List<InstrutorResponseDTO> findAll() {
         return instrutorRepository.findAll().stream()
-                .map(instrutorMapper::toResponseDTO) // Uso correto do mapper
+                .map(instrutorMapper::toResponseDTO)
                 .collect(Collectors.toList());
     }
 

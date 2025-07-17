@@ -15,7 +15,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.stream.Collectors; // Necessário para Collectors.toList()
+import java.util.stream.Collectors;
 
 @Service
 public class JwtService {
@@ -60,15 +60,15 @@ public class JwtService {
 
     /**
      * Gera um token JWT para um UserDetails, incluindo as roles/autoridades como um claim.
-     * O token será assinado com a chave secreta e terá um tempo de expiração.
-     * @param userDetails Os detalhes do usuário para quem o token será gerado.
+     * O token é assinado com a chave secreta e tem um tempo de expiração.
+     * @param userDetails Os detalhes do usuário para quem o token é gerado.
      * @return O token JWT gerado.
      */
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> extraClaims = new HashMap<>();
         // Adiciona as roles/autoridades do usuário como um claim 'roles' no token
         extraClaims.put("roles", userDetails.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority) // Pega a string da autoridade (ex: "ROLE_ADMIN")
+                .map(GrantedAuthority::getAuthority) // Pega a string da autoridade
                 .collect(Collectors.toList()));
         return Jwts.builder()
                 .setClaims(extraClaims) // Inclui os claims personalizados

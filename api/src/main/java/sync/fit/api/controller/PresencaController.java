@@ -7,7 +7,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import sync.fit.api.dto.response.PresencaResponse;
-import sync.fit.api.model.UserIdentifiable; // Importe a interface
+import sync.fit.api.model.UserIdentifiable;
 import sync.fit.api.service.PresencaService;
 
 import java.time.LocalDateTime;
@@ -27,7 +27,7 @@ public class PresencaController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserIdentifiable userLogado = (UserIdentifiable) authentication.getPrincipal();
 
-        // É crucial verificar se o usuário logado é realmente um Cliente
+        // Verifica se o usuário logado é realmente um Cliente
         if (!(userLogado instanceof sync.fit.api.model.Cliente)) {
             throw new IllegalArgumentException("Somente clientes podem marcar presença nesta rota.");
         }
@@ -77,7 +77,7 @@ public class PresencaController {
     public ResponseEntity<List<PresencaResponse>> getFrequenciaGeral(
             @RequestParam("dataInicio") String dataInicio,
             @RequestParam("dataFim") String dataFim) {
-        // Parsear as datas. Use um formato ISO_LOCAL_DATE_TIME (YYYY-MM-DDTHH:MM:SS)
+        // Parsear as datas. Usar um formato ISO_LOCAL_DATE_TIME (YYYY-MM-DDTHH:MM:SS)
         LocalDateTime start = LocalDateTime.parse(dataInicio);
         LocalDateTime end = LocalDateTime.parse(dataFim);
         List<PresencaResponse> frequencia = presencaService.getFrequenciaGeral(start, end);

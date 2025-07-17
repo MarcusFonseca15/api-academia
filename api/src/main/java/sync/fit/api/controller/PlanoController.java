@@ -43,7 +43,7 @@ public class PlanoController {
     @PutMapping("/{id}")
     public ResponseEntity<PlanoResponseDTO> atualizar(
             @PathVariable Long id,
-            @Valid @RequestBody PlanoRequestDTO dto) { // Adicionado @Valid
+            @Valid @RequestBody PlanoRequestDTO dto) {
         PlanoResponseDTO planoAtualizado = planoService.atualizar(id, dto);
         return ResponseEntity.ok(planoAtualizado);
     }

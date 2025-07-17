@@ -12,12 +12,12 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 
-// Este DTO será usado apenas por administradores para atualizar clientes
+// DTO usado apenas por administradores para atualizar clientes
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ClienteAdminUpdateDTO { // <--- NOME DA CLASSE ALTERADO
+public class ClienteAdminUpdateDTO {
     @NotBlank(message = "O nome é obrigatório")
     private String nome;
 
@@ -34,7 +34,7 @@ public class ClienteAdminUpdateDTO { // <--- NOME DA CLASSE ALTERADO
     @Pattern(regexp = "^\\(?(\\d{2})\\)?\\s?(\\d{4,5})\\-?(\\d{4})$", message = "Formato de telefone inválido. Ex: (XX) XXXX-XXXX ou (XX) XXXXX-XXXX")
     private String telefone;
 
-    private Long planoId;      // <--- MANTIDO AQUI para atualização pelo ADMIN
+    private Long planoId;
 
-    private Long instrutorId;  // <--- MANTIDO AQUI para atualização pelo ADMIN
+    private Long instrutorId;
 }

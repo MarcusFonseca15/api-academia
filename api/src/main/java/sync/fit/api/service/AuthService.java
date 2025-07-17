@@ -129,8 +129,8 @@ public class AuthService {
                 cargoAdministrador
         );
 
-        // MUDANÇA AQUI: Altere "ROLE_ADMINISTRADOR" para "ROLE_ADMIN"
-        Role adminRole = roleRepository.findByName("ROLE_ADMIN") // <--- ALTERADO PARA "ROLE_ADMIN"
+
+        Role adminRole = roleRepository.findByName("ROLE_ADMIN")
                 .orElseThrow(() -> new ResourceNotFoundException("Role ROLE_ADMIN não encontrada. Verifique seu data.sql ou inicialização de roles."));
         administrador.getRoles().add(adminRole);
 

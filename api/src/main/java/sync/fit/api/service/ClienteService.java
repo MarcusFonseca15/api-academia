@@ -1,7 +1,7 @@
 package sync.fit.api.service;
 
-import sync.fit.api.dto.request.ClienteAdminUpdateDTO; // Importe o DTO renomeado
-import sync.fit.api.dto.request.ClienteUpdateProfileDTO; // Importe o novo DTO
+import sync.fit.api.dto.request.ClienteAdminUpdateDTO;
+import sync.fit.api.dto.request.ClienteUpdateProfileDTO;
 import sync.fit.api.dto.request.ClienteRegisterRequestDTO;
 import sync.fit.api.dto.response.ClienteResponseDTO;
 import sync.fit.api.exception.ResourceNotFoundException;
@@ -89,7 +89,7 @@ public class ClienteService {
         return clienteMapper.toResponseDTO(salvo);
     }
 
-    // NOVO MÉTODO: Atualização de perfil pelo CLIENTE
+
     @Transactional
     public ClienteResponseDTO updateProfile(Long id, ClienteUpdateProfileDTO requestDTO) {
         Cliente existingCliente = clienteRepository.findById(id)
@@ -115,7 +115,7 @@ public class ClienteService {
         return clienteMapper.toResponseDTO(atualizado);
     }
 
-    // MÉTODO EXISTENTE, AGORA PARA ATUALIZAÇÃO PELO ADMINISTRADOR
+
     @Transactional
     public ClienteResponseDTO updateByAdmin(Long id, ClienteAdminUpdateDTO requestDTO) {
         Cliente existingCliente = clienteRepository.findById(id)

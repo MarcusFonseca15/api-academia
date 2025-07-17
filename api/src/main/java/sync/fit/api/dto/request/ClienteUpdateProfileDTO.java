@@ -24,7 +24,7 @@ public class ClienteUpdateProfileDTO {
     @Email(message = "Formato de email inválido")
     private String email;
 
-    private String senha; // Opcional para atualização, se não quiser mudar a senha
+    private String senha;
 
     @NotNull(message = "A data de nascimento é obrigatória")
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
@@ -33,5 +33,5 @@ public class ClienteUpdateProfileDTO {
     @Pattern(regexp = "^\\(?(\\d{2})\\)?\\s?(\\d{4,5})\\-?(\\d{4})$", message = "Formato de telefone inválido. Ex: (XX) XXXX-XXXX ou (XX) XXXXX-XXXX")
     private String telefone;
 
-    // REMOVIDOS planoId e instrutorId, pois o cliente não deve alterá-los diretamente
+
 }

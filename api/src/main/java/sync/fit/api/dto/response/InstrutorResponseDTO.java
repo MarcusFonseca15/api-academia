@@ -5,7 +5,7 @@ import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
-import java.util.Set; // Se quiser incluir roles específicas do Instrutor aqui
+import java.util.Set;
 
 @Getter
 @Setter

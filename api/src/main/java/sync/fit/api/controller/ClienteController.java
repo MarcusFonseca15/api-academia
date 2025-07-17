@@ -1,7 +1,7 @@
 package sync.fit.api.controller;
 
-import sync.fit.api.dto.request.ClienteAdminUpdateDTO; // Importe o DTO renomeado
-import sync.fit.api.dto.request.ClienteUpdateProfileDTO; // Importe o novo DTO
+import sync.fit.api.dto.request.ClienteAdminUpdateDTO;
+import sync.fit.api.dto.request.ClienteUpdateProfileDTO;
 import sync.fit.api.dto.request.ClienteRegisterRequestDTO;
 import sync.fit.api.dto.response.ClienteResponseDTO;
 import sync.fit.api.model.Cliente;
@@ -55,8 +55,8 @@ public class ClienteController {
     @PutMapping("/{id}")
     public ResponseEntity<ClienteResponseDTO> updateCliente(
             @PathVariable Long id,
-            @Valid @RequestBody ClienteAdminUpdateDTO requestDTO) { // <--- USANDO ClienteAdminUpdateDTO
-        ClienteResponseDTO cliente = clienteService.updateByAdmin(id, requestDTO); // <--- NOVO MÉTODO NO SERVICE
+            @Valid @RequestBody ClienteAdminUpdateDTO requestDTO) {
+        ClienteResponseDTO cliente = clienteService.updateByAdmin(id, requestDTO);
         return ResponseEntity.ok(cliente);
     }
 
@@ -85,14 +85,14 @@ public class ClienteController {
     // Cliente pode atualizar seu próprio perfil
     @PreAuthorize("hasRole('CLIENTE')")
     @PutMapping("/meu-perfil")
-    public ResponseEntity<ClienteResponseDTO> updateMeuPerfil(@Valid @RequestBody ClienteUpdateProfileDTO requestDTO) { // <--- USANDO ClienteUpdateProfileDTO
+    public ResponseEntity<ClienteResponseDTO> updateMeuPerfil(@Valid @RequestBody ClienteUpdateProfileDTO requestDTO) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserIdentifiable userLogado = (UserIdentifiable) authentication.getPrincipal();
 
         if (!(userLogado instanceof Cliente)) {
             throw new SecurityException("Acesso negado: Usuário autenticado não é um Cliente.");
         }
-        ClienteResponseDTO updatedCliente = clienteService.updateProfile(userLogado.getId(), requestDTO); // <--- NOVO MÉTODO NO SERVICE
+        ClienteResponseDTO updatedCliente = clienteService.updateProfile(userLogado.getId(), requestDTO);
         return ResponseEntity.ok(updatedCliente);
     }
 }

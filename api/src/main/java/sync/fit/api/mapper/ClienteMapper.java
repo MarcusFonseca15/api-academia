@@ -33,7 +33,7 @@ public interface ClienteMapper {
     ClienteResponseDTO toResponseDTO(Cliente cliente);
 
     // Mapeamento de ClienteRequestDTO para Cliente (para atualização)
-    // Use @MappingTarget para atualizar uma entidade existente
+    // @MappingTarget para atualizar uma entidade existente
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "email", ignore = true)
     @Mapping(target = "senha", ignore = true)
@@ -46,11 +46,11 @@ public interface ClienteMapper {
 
     @Named("mapPlanoIdToPlano")
     default Plano mapPlanoIdToPlano(Long planoId) {
-        return null; // Retornando null para evitar erro de compilação.
+        return null; // Retorna null para evitar erro de compilação.
     }
 
     @Named("mapInstrutorIdToInstrutor")
     default Instrutor mapInstrutorIdToInstrutor(Long instrutorId) {
-        return null; // Retornando null para evitar erro de compilação.
+        return null; // Retorna null para evitar erro de compilação.
     }
 }

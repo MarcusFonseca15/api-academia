@@ -5,7 +5,7 @@ public class ExercicioRequestDTO {
     private String descricao;
     private Integer repeticoes;
     private Integer series;
-    private Long treinoId; // ligação com treino
+    private Long treinoId;
 
     public ExercicioRequestDTO() {
     }

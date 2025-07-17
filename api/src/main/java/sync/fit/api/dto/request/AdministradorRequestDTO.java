@@ -2,7 +2,7 @@ package sync.fit.api.dto.request;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.NoArgsConstructor; // <--- REINTRODUZIR
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 @Getter

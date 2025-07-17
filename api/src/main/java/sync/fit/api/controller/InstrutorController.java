@@ -41,7 +41,7 @@ public class InstrutorController {
     @GetMapping("/meus-alunos")
     public ResponseEntity<List<ClienteResponseDTO>> getMeusAlunos() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Funcionario instrutorLogado = (Funcionario) authentication.getPrincipal(); // Cast seguro aqui
+        Funcionario instrutorLogado = (Funcionario) authentication.getPrincipal();
 
         List<ClienteResponseDTO> meusAlunos = instrutorService.findAlunosByInstrutorId(instrutorLogado.getId());
         return ResponseEntity.ok(meusAlunos);

@@ -23,6 +23,6 @@ public class AdministradorResponseDTO {
 
     private Set<String> roles;
 
-    // Adicione campos específicos para Administrador
+
 
 }

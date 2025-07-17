@@ -2,7 +2,7 @@ package sync.fit.api.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import sync.fit.api.dto.response.PresencaResponse; // Importe
+import sync.fit.api.dto.response.PresencaResponse;
 import sync.fit.api.exception.ResourceNotFoundException;
 import sync.fit.api.model.Cliente;
 import sync.fit.api.model.Presenca;

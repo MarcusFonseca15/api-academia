@@ -25,8 +25,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final CustomUserDetailsService userDetailsService;
 
     // Lista de caminhos que o JWT filter deve IGNORAR TOTALMENTE.
-    // Estes caminhos são permitidos pelo SecurityConfig sem autenticação.
-    // IMPORTANTE: /api/auth/login é adicionado aqui porque não que o filtro JWT
+    // Caminhos são permitidos pelo SecurityConfig sem autenticação.
+    // IMPORTANTE: /api/auth/login é adicionado aqui porque que o filtro JWT nao
     // tente extrair ou validar um token para ele, já que é uma rota pública.
     private static final List<String> PATHS_TO_SKIP_JWT_FILTER = Arrays.asList(
             "/api/auth/login", // Apenas o login. POST requests para aqui não serão verificadas pelo JWT Filter.
@@ -45,12 +45,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     ) throws ServletException, IOException {
 
         final String requestUri = request.getRequestURI();
-        final String requestMethod = request.getMethod(); // Pegue o método também para o login
+        final String requestMethod = request.getMethod();
 
 
         // Se a requisição for para /api/auth/login e for um POST, ou para uma das rotas do Swagger,
-        // o filtro JWT não deve faz nada, apenas passar a requisição adiante.
-        // O SecurityConfig já lidará com o 'permitAll()'.
+        // o filtro JWT não faz nada, apenas passar a requisição adiante.
+        // O SecurityConfig já lida com o 'permitAll()'.
         boolean shouldSkipJwtFilter = false;
         if (requestUri.equals("/api/auth/login") && requestMethod.equals("POST")) {
             shouldSkipJwtFilter = true;
@@ -65,7 +65,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         if (shouldSkipJwtFilter) {
             filterChain.doFilter(request, response);
-            return; // Encerrar o processamento deste filtro
+            return; // Encerrar o processamento do filtro
         }
 
 
@@ -75,7 +75,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         // Se não houver cabeçalho de autorização ou não for um token Bearer,
         // a requisição não está autenticada via JWT.
-        // O Spring Security decidirá se a rota exige autenticação ou não (401 se protegida).
+        // O Spring Security decidi se a rota exige autenticação ou não (401 se protegida).
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
